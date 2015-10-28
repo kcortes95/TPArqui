@@ -1,5 +1,6 @@
 #include "video.h"
-#include "../util/util.h"
+#include "../../util/util.h"
+#include "../libasm.h"
 
 char *video_start_ptr = (char *) VIDEO_START_ADDR;
 int current_offset = 0;
@@ -36,12 +37,12 @@ void move_up() {
 void set_blink(int position) {
 
 	// parte baja del puerto del cursor
-	outport(BLINK_LOW_PORT, 0x0F);
-	outport(BLINK_HIGH_PORT, (unsigned char) (position & 0xFF));
+	out_port(BLINK_LOW_PORT, 0x0F);
+	out_port(BLINK_HIGH_PORT, (unsigned char) (position & 0xFF));
 
 	// parte alta del puerto del cursor
-	outport(BLINK_LOW_PORT, 0x0E);
-	outport(BLINK_HIGH_PORT, (unsigned char) ((position & 0xFF00) >> 8));
+	out_port(BLINK_LOW_PORT, 0x0E);
+	out_port(BLINK_HIGH_PORT, (unsigned char) ((position & 0xFF00) >> 8));
 }
 
 void set_colour(char bg, char fg) {
@@ -70,6 +71,7 @@ void putcxy(char c, int x, int y) {
 }
 
 
+/*
 void printf(const char * string, int mod, ...){
 	char c;
 	va_list listpointer;
@@ -94,7 +96,7 @@ void printf(const char * string, int mod, ...){
 	}
 	va_end(listpointer);
 }
-
+*/
 
 void putc(char c) {
 

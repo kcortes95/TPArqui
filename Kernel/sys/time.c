@@ -6,7 +6,7 @@ void getTime(int GMT){
     int s = getHours();
     int m = getMinutes();
     int h = getSeconds();
-    printf("%d:%d:%d",h+GMT,s,m);
+    //printf("%d:%d:%d",h+GMT,s,m);
 }
 
 //TODO: Esto deberiamos hacerlo mejor! Estamos repitiendo código

@@ -50,7 +50,7 @@ void putcxy(char c, int x, int y);
 void putc(char c);
 void prints(char *s);
 void println(char *s);
-void printf(const char * string, int mod, ...);
+//void printf(const char * string, int mod, ...);
 
 void putnum(int i, int base);
 void putbin(int i);
