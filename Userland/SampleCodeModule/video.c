@@ -70,6 +70,32 @@ void putcxy(char c, int x, int y) {
 }
 
 
+void printf(const char * string, uint8_t mod, ...){
+	char c;
+	va_list listpointer;
+	va_start(listpointer, mod);
+	for(int i=0; string[i] != '\0'; i++){
+		c = string[i];
+		if(c == '%'){
+			switch(string[i+1]){
+				case 'd':	print_number(va_arg(listpointer,int));
+							i++;
+							break;
+				case 's':	print_message(va_arg(listpointer,char *), mod);
+							i++;
+							break;
+				default: 	_put_char(string[i], mod);
+							break;
+			}
+		}
+		else{
+			_put_char(string[i], mod); // 15 para fondo negro letras blancas
+		}
+	}
+	va_end(listpointer);
+}
+
+
 void putc(char c) {
 
 	if (MIN_VISIBLE_ASCII <= c && c <= MAX_VISIBLE_ASCII) {
