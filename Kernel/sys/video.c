@@ -3,11 +3,11 @@
 #include "include/video.h"
 #include "include/libasm.h"
 
-char *video_start_ptr = (char *) VIDEO_START_ADDR;
-uint16_t current_offset = 0;
+static char *video_start_ptr = (char *) VIDEO_START_ADDR;
+static uint16_t current_offset = 0;
 
 // White over black color code
-uint8_t current_colour = (COLOR_BLACK << 4) | (COLOR_LIGHT_GREY & 0x0f);
+static uint8_t current_colour = (COLOR_BLACK << 4) | (COLOR_LIGHT_GREY & 0x0f);
 
 void clc() {
 	int i = 0;
@@ -15,7 +15,6 @@ void clc() {
 		video_start_ptr[i+BUFFER_CHAR] = 0;
 		video_start_ptr[i+BUFFER_ATTRIB] = current_colour;
 	}
-	set_blink(current_offset);
 }
 
 void clr(uint8_t row) {
@@ -107,7 +106,8 @@ void putc(char c) {
 		current_offset += 2;
 	} else {
 		if (c == CHAR_NEWLINE) {
-			current_offset += BUFFER_COL*2 - current_offset % BUFFER_COL;
+			current_offset = (current_offset / (BUFFER_COL*2) + 1 ) * BUFFER_COL * 2;
+			// current_offset += BUFFER_COL*2 - current_offset % BUFFER_COL;
 		} else if (c == CHAR_BACKSPACE) {
 			video_start_ptr[current_offset - 2 + BUFFER_CHAR] = 0;
 			video_start_ptr[current_offset - 2 + BUFFER_ATTRIB] = current_colour;

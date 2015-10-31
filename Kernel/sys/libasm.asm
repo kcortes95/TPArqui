@@ -1,5 +1,43 @@
 global out_port
 global in_port
+global _cli
+global _sti
+global _halt
+
+%macro PUSHALL 0
+    push    RBX
+    push    RDI
+    push    RSI
+    push    RSP
+    push    R12
+    push    R13
+    push    R14
+    push    R15
+%endmacro
+
+%macro POPALL 0
+    pop     R15
+    pop     R14
+    pop     R13
+    pop     R12
+    pop     RSP
+    pop     RSI
+    pop     RDI
+    pop     RBX
+%endmacro
+
+%macro ENTER 0
+    push    rbp
+    mov     rbp, rsp
+    PUSHALL
+%endmacro
+
+%macro LEAVE 0
+    POPALL
+    mov     rsp, rbp
+    pop     rbp
+    ret
+%endmacro
 
 ;=========================
 ; out_port
@@ -11,15 +49,11 @@ global in_port
 ;	- Port: rbp+8
 ;	- Value: rbp+12
 out_port:
-	push rbp
-	mov rbp,rsp
-	mov rax,0
-	mov rdx,0
-	mov rdx, [rbp+8] ; value
-	mov rax, [rbp+12] ;numero del port
+	ENTER
+	mov rdx, [rbp+8]
+	mov rax, [rbp+12]
 	out dx,al
-	leave
-	ret
+	LEAVE
 
 ;=========================
 ; in_port
@@ -32,12 +66,36 @@ out_port:
 ; Salida
 ;	- BCD del valor leido
 in_port:
-	push rbp
-	mov rbp, rsp
+	ENTER
 	mov rdx, [rbp+8]
 	mov rax, 0
 	in al, dx
-	;retornamos en eax el valor del numero BCD format
-	leave
+	LEAVE
+
+;=========================
+; _cli
+;=========================
+; Deshabilita
+; interrupciones
+_cli:
+	cli
 	ret
 
+;=========================
+; _sli
+;=========================
+; Habilita interrupciones
+_sti:
+	sti
+	ret
+
+;=========================
+; _halt
+;=========================
+; Pone el CPU en Idle
+; hasta que entre una
+; interrupcion
+_halt:
+	cli
+	hlt
+	ret
