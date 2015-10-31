@@ -1,4 +1,5 @@
-#include "util.h"
+#include "../include/types.h"
+#include "include/util.h"
 
 char* itoa(int value, char *str, int base) {
 	
@@ -45,10 +46,10 @@ int strlen(char *s) {
 	return l;
 }
 
-int to_bcd8(int n) {
+uint8_t to_bcd8(uint8_t n) {
 	return ((n & 0xf0)>>4)*10 + (n & 0x0f);
 }
 
-int to_bcd16(int n) {
+uint16_t to_bcd16(uint16_t n) {
 	return ((n & 0xf000)>>16)*1000 + ((n & 0x0f00)>>8) * 100 + to_bcd8(n & 0x00ff);
 }

@@ -1,3 +1,0 @@
-OJO! Acá saque el keyboard porque 
-1- me tiraba error por un llamado a una funcion que estaba acá
-2- No era necesario porque despues tenemos que implementar la otra forma

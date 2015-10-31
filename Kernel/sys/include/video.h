@@ -16,8 +16,8 @@
 #define COLOR_BLUE					(char)1
 #define COLOR_GREEN					(char)2
 #define COLOR_CYAN					(char)3
-#define	COLOR_RED					(char)4
-#define	COLOR_MAGENTA				(char)5
+#define COLOR_RED						(char)4
+#define COLOR_MAGENTA				(char)5
 #define COLOR_BROWN					(char)6
 #define COLOR_LIGHT_GREY			(char)7
 #define COLOR_DARK_GREY				(char)8
@@ -25,11 +25,9 @@
 #define COLOR_LIGHT_GREEN			(char)10
 #define COLOR_LIGHT_CYAN			(char)11
 #define COLOR_LIGHT_RED				(char)12
-#define COLOR_LIGHT_MAGENTA			(char)13
+#define COLOR_LIGHT_MAGENTA		(char)13
 #define COLOR_LIGHT_YELLOW			(char)14
 #define COLOR_WHITE					(char)15
-
-#define COLOR_BLINK	(1 << 7) | ((COLOR_BLACK << 4) & 0x70) | (0 & 0x0f)
 
 #define CHAR_SPACE ' '
 #define CHAR_NEWLINE '\n'
@@ -39,14 +37,16 @@
 #define MAX_VISIBLE_ASCII 126
 
 void clc();
-void clr(int row);
+void clr(uint8_t row);
 void move_up();
 
-void set_colour(char bg, char fg);
-char get_fg_colour();
-char get_bg_colour();
+void set_colour(uint8_t bg, uint8_t fg);
+uint8_t get_fg_colour();
+uint8_t get_bg_colour();
 
-void putcxy(char c, int x, int y);
+void set_blink(uint16_t position);
+
+void putcxy(char c, uint8_t x, uint8_t y);
 void putc(char c);
 void prints(char *s);
 void println(char *s);
@@ -57,8 +57,8 @@ void putbin(int i);
 void puti(int i);
 void puthex(int i);
 
-int get_x();
-int get_y();
+uint8_t get_x();
+uint8_t get_y();
 
 #endif
 

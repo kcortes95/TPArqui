@@ -1,12 +1,13 @@
-#include "video.h"
-#include "../../util/util.h"
-#include "../libasm.h"
+#include "../include/types.h"
+#include "../util/include/util.h"
+#include "include/video.h"
+#include "include/libasm.h"
 
 char *video_start_ptr = (char *) VIDEO_START_ADDR;
-int current_offset = 0;
+uint16_t current_offset = 0;
 
 // White over black color code
-char current_colour = (COLOR_BLACK << 4) | (COLOR_LIGHT_GREY & 0x0f);
+uint8_t current_colour = (COLOR_BLACK << 4) | (COLOR_LIGHT_GREY & 0x0f);
 
 void clc() {
 	int i = 0;
@@ -17,8 +18,8 @@ void clc() {
 	set_blink(current_offset);
 }
 
-void clr(int row) {
-	int i = BUFFER_COL*row*2;
+void clr(uint8_t row) {
+	uint8_t i = BUFFER_COL*row*2;
 	for (; i < BUFFER_COL*row*4; i+=2) {
 		video_start_ptr[i+BUFFER_CHAR] = 0;
 		video_start_ptr[i+BUFFER_ATTRIB] = current_colour;
@@ -26,7 +27,7 @@ void clr(int row) {
 }
 
 void move_up() {
-	int i = BUFFER_COL*2;
+	uint8_t i = BUFFER_COL*2;
 	for (; i < BUFFER_COL*BUFFER_ROW; i += 2) {
 		video_start_ptr[i - BUFFER_COL*2 + BUFFER_CHAR] = video_start_ptr[i + BUFFER_CHAR];
 		video_start_ptr[i - BUFFER_COL*2 + BUFFER_ATTRIB] = video_start_ptr[i + BUFFER_ATTRIB];
@@ -34,7 +35,7 @@ void move_up() {
 	clr(BUFFER_ROW-1);
 }
 
-void set_blink(int position) {
+void set_blink(uint16_t position) {
 
 	// parte baja del puerto del cursor
 	out_port(BLINK_LOW_PORT, 0x0F);
@@ -45,27 +46,27 @@ void set_blink(int position) {
 	out_port(BLINK_HIGH_PORT, (unsigned char) ((position & 0xFF00) >> 8));
 }
 
-void set_colour(char bg, char fg) {
+void set_colour(uint8_t bg, uint8_t fg) {
 	current_colour = (bg << 4) | (fg & 0x0f);
 }
 
-char get_fg_colour() {
+uint8_t get_fg_colour() {
 	return current_colour & 0x0f;
 }
 
-char get_bg_colour() {
+uint8_t get_bg_colour() {
 	return (current_colour & 0xf0) >> 4;
 }
 
-int get_x() {
+uint8_t get_x() {
 	return current_offset % BUFFER_COL;
 }
 
-int get_y() {
+uint8_t get_y() {
 	return current_offset / BUFFER_COL + 1;
 }
 
-void putcxy(char c, int x, int y) {
+void putcxy(char c, uint8_t x, uint8_t y) {
 	video_start_ptr[y*BUFFER_COL + x + BUFFER_CHAR] = c;
 	video_start_ptr[y*BUFFER_COL + x + BUFFER_ATTRIB] = current_colour;
 }
