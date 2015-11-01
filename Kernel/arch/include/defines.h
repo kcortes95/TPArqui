@@ -12,7 +12,6 @@
 #define KEYBOARD_STATUS_PORT 0x64
 
 
-
 typedef enum CURSOR_STYLE{
 	CURSOR_BLOCK = 0x00,
 	CURSOR_LINE = 0x0E,

@@ -16,6 +16,7 @@
 #define SPACEBAR            0x20
 
 #define EMPTY 0xFF
+#define EOF EMPTY
 #define KEYBOARD_BUFFER_SIZE 32
 
 typedef struct {

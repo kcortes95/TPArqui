@@ -35,4 +35,6 @@ typedef char* string;
 
 typedef int8_t error_t;
 
+typedef uint64_t time_t;
+
 #endif

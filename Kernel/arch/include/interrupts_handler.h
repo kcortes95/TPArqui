@@ -30,7 +30,7 @@ typedef struct {
 } listeners_t;
 
 void init_interrupts();
-error_t add_listener(syscall_id id, listener_t listener);
+error_t add_listener(interrupt_id id, listener_t listener);
 
 void on_interrupt(interrupt_id id);
 void on_timer_tick();

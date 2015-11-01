@@ -22,7 +22,7 @@ void init_interrupts() {
 
 }
 
-error_t add_listener(syscall_id id, listener_t listener) {
+error_t add_listener(interrupt_id id, listener_t listener) {
 
 	if ( listeners[id].size >= MAX_LISTENERS_ALLOWED ) {
 		return 1;
@@ -31,26 +31,25 @@ error_t add_listener(syscall_id id, listener_t listener) {
 	listeners[id][size++] = listener;
 }
 
-void on_interrupt(interrupt_id id) {
+void on_interrupt(interrupt_id id, ddword id, ddword arg1, ddword arg2, ddword arg3) {
 
 	uint8_t i = 0;
 
 	for (; i < listeners[id].size; i++) {
-		listeners[id][i].call();
+		listeners[id][i].call(id, arg1, arg2, arg3);
 	}
 
 }
 
-void on_timer_tick() {
-
-	on_interrupt(TIMER_TICK);
+void on_timer_tick(ddword id, ddword arg1, ddword arg2, ddword arg3) {}
+	on_interrupt(TIMER_TICK, id, arg1, arg2, arg3);
 }
 
-void on_keyboard() {
-	on_interrupt(KEYBOARD);
+void on_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3) {
+	on_interrupt(KEYBOARD, id, arg1, arg2, arg3);
 }
 
-void on_syscall() {
-	on_interrupt(SYSCALL);
+void on_syscall(ddword id, ddword arg1, ddword arg2, ddword arg3) {
+	on_interrupt(SYSCALL, id, arg1, arg2, arg3);
 }
 
