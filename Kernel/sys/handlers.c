@@ -1,8 +1,15 @@
-#include "interruptsHandler.h"
+#include "include/interruptsHandler.h"
 
 int character = 0x0;
 
 void on_ack_keyboard() {
+
+	unsigned char status = kin(KEYBOARD_STATUS_PORT);
+	unsigned char keycode = kin(KEYBOARD_DATA_PORT);
+	
+	if (status &  0x01) {
+		key_received(keycode);
+	}
 
 }
 
@@ -23,23 +30,10 @@ void register_handlers() {
 	tt_listener.call = &on_ack_timer_tick;
 	syscall_listener = &on_ack_syscall;
 
-}
+	add_listener(KEYBOARD, keyboard_listener);
+	add_listener(TIMER_TICK, tt_listener);
+	add_listener(syscall_listener, syscall_listener);
 
-void keyboardHandler(void) {
-
-	unsigned char status = kin(KEYBOARD_STATUS_PORT);
-	unsigned char keycode = kin(KEYBOARD_DATA_PORT);
-
-	if(isScreenSaverShowing()){
-		stopScreenSaver();
-		return;
-	}
-	
-	if (status &  0x01) {
-		kKBKeyReceived(keycode);
-	}
-
-	resetTime();
 }
 
 void syscallHandler(ddword a, ddword b, ddword c, ddword d){
@@ -70,6 +64,3 @@ void syscallHandler(ddword a, ddword b, ddword c, ddword d){
 	}
 }
 
-void TTHandler(){
-	screenSaverTick();
-}

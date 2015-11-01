@@ -13,7 +13,9 @@
 #define yes YES
 #define no NO
 
-typedef unsigned char bool;
+typedef unsigned char boolean;
+typedef boolean bool;
+
 typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int dword;

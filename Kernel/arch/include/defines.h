@@ -1,9 +1,6 @@
 #ifndef __TomiOS__DEFINES__
 #define __TomiOS__DEFINES__
 
-
-
-
 #define PIC_DATA_PORT      0x21
 
 #define TICK_INTERVAL   55
@@ -14,38 +11,13 @@
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
 
-#define KEYBOARD_BUFFER_SIZE  32
 
-#define NOT_PRINTABLE 0x0
-#define TOTAL_KEYS  59
-
-#define KEY_RELEASED  0x80
-
-#define RS_PRESSED          0x36
-#define RS_RELEASED         0xB6
-#define LS_PRESSED          0x2A
-#define LS_RELEASED         0xAA
-#define CAPS_LOCK           0x3A
-#define SPACEBAR            0x20
-
-#define EMPTY 0xFF
 
 typedef enum CURSOR_STYLE{
 	CURSOR_BLOCK = 0x00,
 	CURSOR_LINE = 0x0E,
 	NO_CURSOR = 0x10
 } CursorStyle;
-
-typedef struct KB_STATUS {
-	bool shiftEnabled;
-	bool capsLockEnabled;
-} kKBStatus;
-
-typedef struct KB_BUFFER {
-	word readIndex;
-	word writeIndex;
-	unsigned char buffer[KEYBOARD_BUFFER_SIZE];
-} kKBBuffer;
 
 typedef enum COLOR {
 	BLACK,
