@@ -93,5 +93,8 @@ int main() {
 	clc();	
 
 
+	// Con esto ejecutamos Userland
+	// ((EntryPoint)sampleCodeModuleAddress)();
+
 	return 0;
 }
