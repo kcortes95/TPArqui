@@ -4,6 +4,8 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 
+#include "arch/include/arch.h"
+
 #include "sys/include/video.h"
 
 extern uint8_t text;
@@ -32,7 +34,7 @@ void * getStackBase()
 		(uint64_t)&endOfKernel
 		+ PageSize * 8				//The size of the stack itself, 32KiB
 		- sizeof(uint64_t)			//Begin at the top of the stack
-	);
+		);
 }
 
 void * initializeKernelBinary()
@@ -51,8 +53,13 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-int main()
-{	
+int main() {
+
+	init_idt();
+	init_interrupts();
+
+
+
 	clc();
 
 	println("	            ____________________________________________________");
@@ -74,7 +81,7 @@ int main()
 	println("           |   |_____________________________________________|    |");
 	println("           |                                                      |");
 	println("            \\_____________________________________________________/");
-	println("                   \_______________________________________/");
+	println("                   \\_______________________________________/");
 	println("                _______________________________________________");
 	println("             _-'    .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.  --- `-_");
 	println("          _-'.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.--.  .-.-.`-_");

@@ -1,74 +1,82 @@
-global out_port
-global in_port
+global _outport
+global _inport
 global _cli
 global _sti
 global _halt
 
 %macro PUSHALL 0
-    push    RBX
-    push    RDI
-    push    RSI
-    push    RSP
-    push    R12
-    push    R13
-    push    R14
-    push    R15
+	push    RBX
+	push    RDI
+	push    RSI
+	push    RSP
+	push    R12
+	push    R13
+	push    R14
+	push    R15
 %endmacro
 
 %macro POPALL 0
-    pop     R15
-    pop     R14
-    pop     R13
-    pop     R12
-    pop     RSP
-    pop     RSI
-    pop     RDI
-    pop     RBX
+	pop     R15
+	pop     R14
+	pop     R13
+	pop     R12
+	pop     RSP
+	pop     RSI
+	pop     RDI
+	pop     RBX
 %endmacro
 
 %macro ENTER 0
-    push    rbp
-    mov     rbp, rsp
-    PUSHALL
+	push    rbp
+	mov     rbp, rsp
+	PUSHALL
 %endmacro
 
 %macro LEAVE 0
-    POPALL
-    mov     rsp, rbp
-    pop     rbp
-    ret
+	POPALL
+	mov     rsp, rbp
+	pop     rbp
+	ret
 %endmacro
 
 ;=========================
-; out_port
+; _outport
+;=========================
+; void _outport(int,int)
 ;=========================
 ; Escribe en un puerto el
 ; contenido de Value
 ;
 ; Argumentos
-;	- Port: rbp+8
-;	- Value: rbp+12
-out_port:
+;	- Port: di
+;	- Value: si
+_outport:
 	ENTER
-	mov rdx, [rbp+8]
-	mov rax, [rbp+12]
-	out dx,al
+	mov rax, 0
+	mov rdx, 0
+
+	mov ax, si
+	and ax, 0xff
+	mov dx, di
+	out dx, al
+
 	LEAVE
 
 ;=========================
-; in_port
+; _inport
+;=========================
+; void _inport(int)
 ;=========================
 ; Lee el contenido de un
 ; puerto
 ;
 ; Argumentos
-;	- Port: rbp+8
+;	- Port: di
 ; Salida
 ;	- BCD del valor leido
-in_port:
+_inport:
 	ENTER
-	mov rdx, [rbp+8]
-	mov rax, 0
+	mov dx, di
 	in al, dx
 	LEAVE
 
@@ -96,6 +104,5 @@ _sti:
 ; hasta que entre una
 ; interrupcion
 _halt:
-	cli
 	hlt
 	ret
