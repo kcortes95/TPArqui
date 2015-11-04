@@ -12,6 +12,8 @@
 
 #include "sys/include/keyboard.h"
 
+#include "sys/include/syscalls.h"
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -124,14 +126,21 @@ int main() {
 	init_interrupts();
 	init_timer();
 
-	play_intro();
+	init_syscalls();
 
-	// recien ahora activamos el teclado
-	// init_keyboard();
+// recien ahora activamos el teclado
+	init_keyboard();
 
+	// play_intro();
+	
+	clc();
+
+	
+
+	
 
 	// Con esto ejecutamos Userland
-	// ((EntryPoint)sampleCodeModuleAddress)();
+	((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;
 }

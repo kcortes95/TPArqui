@@ -1,6 +1,7 @@
 #include "../arch/include/interrupts_handler.h"
 #include "include/syscalls.h"
 #include "include/keyboard.h"
+#include "include/video.h"
 
 int character = 0x0;
 
@@ -16,24 +17,37 @@ void on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 
 	int i = 0;
 	char c;
+	char *buf;
 
 
 	if (id == READ) {
 
-		// Pedirle al teclado que tiene para darme
+		// arg1 = fd
+		// arg2 = buf
+		// arg3 = size
 
+		buf = (char*)arg2;
 
-		while (!is_buffer_empty()) {
-			c = get_key();
-			// buffer[i++] = c
-		}
+		do {
+
+			if (!is_buffer_empty()) {
+				c = get_key();
+				buf[i++] = c;
+			} 
+		} while (i < arg3);
 
 	} else if (id == WRITE) {
+		
+		// arg1 = fd
+		// arg2 = buf
+		// arg3 = size
+		 
+		buf = (char*)arg2;
 
-		// Hablale a video
-
+		prints(buf);
 	}
 
+	return 2;
 }
 
 /**

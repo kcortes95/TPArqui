@@ -1,6 +1,8 @@
 #include "include/interrupts_handler.h"
 #include "include/idt.h"
 
+#include "../sys/include/video.h"
+
 static listener_pool_t listeners_map[SYSCALL - KEYBOARD];
 
 void init_interrupts(void) {
@@ -52,7 +54,8 @@ void on_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3) {
 	on_interrupt(KEYBOARD, id, arg1, arg2, arg3);
 }
 
-void on_syscall(ddword id, ddword arg1, ddword arg2, ddword arg3) {
-	on_interrupt(SYSCALL, id, arg1, arg2, arg3);
+void on_syscall(ddword id, ddword rdi, ddword rsi, ddword rdx, ddword r10) {
+
+	on_interrupt(SYSCALL, id, rdi, rsi, rdx);
 }
 

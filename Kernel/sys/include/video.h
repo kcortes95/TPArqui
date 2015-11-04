@@ -20,10 +20,10 @@ void prints(string s);
 void println(string s);
 //void printf(const char * string, int mod, ...);
 
-void putnum(int i, int base);
-void putbin(int i);
-void puti(int i);
-void puthex(int i);
+void putnum(int64_t i, uint8_t base);
+void putbin(int64_t i);
+void puti(int64_t i);
+void puthex(int64_t i);
 
 uint8_t get_x();
 uint8_t get_y();

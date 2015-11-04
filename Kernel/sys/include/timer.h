@@ -6,7 +6,6 @@
 #define TICK_INTERVAL 55
 
 void wait(time_t millis);
-
 void init_timer();
 
 #endif

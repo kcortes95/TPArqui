@@ -25,6 +25,6 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf asm/*.o *.o *.bin sys/*.o sys/libkevin/*.o
+	rm -rf asm/*.o *.o *.bin sys/*.o arch/*.o
 
 .PHONY: all clean

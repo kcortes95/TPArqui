@@ -1,0 +1,71 @@
+#ifndef __LIBC__
+#define __LIBC__
+
+#include <stdint.h>
+
+/* common structs */
+struct rtc_time {
+	unsigned char sec;
+	unsigned char min;
+	unsigned char hour;
+	unsigned char day;
+	unsigned char mon;
+	unsigned char year;
+};
+
+typedef enum {
+	READ = 0,
+	WRITE,
+	CLEAR_SCREEN,
+	GET_TIME,
+	SET_TIME,
+	PLAY_SOUND
+} syscall_id;
+
+/* syscalls */
+
+extern int syscaller(int, int, char*, int);
+
+extern void gettime(struct rtc_time *);
+extern void settime(struct rtc_time *);
+// extern int write(unsigned int fd, char * str, unsigned int size);
+int write(int fd, char * str, int size);
+extern void pause(void);
+// extern int read(unsigned int fd, char * str, uint32_t size);
+int read(int fd, char * str, int size);
+extern void halt(void);
+extern void shutdown(void);
+extern void beep(void);
+extern int ioctl(unsigned int fd, unsigned long request, void * params);
+
+#define IOCTL_MOVE 0
+#define IOCTL_CLR 1
+#define IOCTL_SET_COLOR 2
+#define IOCTL_INACTIVE 3
+#define _IOCTL_HIGH_LOW(high, low)	((uint64_t)(((high) & 0xFF) << 8) | (uint64_t)((low) & 0xFF))
+
+#define IOCTL_CURSOR(row, pos)	((void *) _IOCTL_HIGH_LOW((row), (pos)))
+#define IOCTL_COLOR(fore, back)	((void *) _IOCTL_HIGH_LOW((fore), (back)))
+
+
+enum IOCTL_COLOR_CODE {
+	IOCTL_COLOR_BLACK = 0,
+	IOCTL_COLOR_BLUE,
+	IOCTL_COLOR_GREEN,
+	IOCTL_COLOR_CYAN,
+	IOCTL_COLOR_RED,
+	IOCTL_COLOR_MAGENTA,
+	IOCTL_COLOR_BROWN,
+	IOCTL_COLOR_LIGHT_GRAY,
+
+	IOCTL_COLOR_GRAY = 8,
+	IOCTL_COLOR_LIGHT_BLUE,
+	IOCTL_COLOR_LIGHT_GREEN,
+	IOCTL_COLOR_LIGHT_CYAN,
+	IOCTL_COLOR_LIGHT_RED,
+	IOCTL_COLOR_LIGHT_MAGENTA,
+	IOCTL_COLOR_YELLOW,
+	IOCTL_COLOR_WHITE,
+};
+
+#endif

@@ -21,7 +21,7 @@ typedef enum {
 #define MAX_LISTENERS_ALLOWED 32
 
 typedef struct {
-	void (*call)(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
+	int (*call)(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
 } listener_t;
 
 typedef struct {
@@ -35,6 +35,6 @@ error_t add_listener(interrupt_id, listener_t);
 void on_interrupt(interrupt_id, ddword, ddword, ddword, ddword);
 void on_timer_tick(ddword, ddword, ddword, ddword);
 void on_keyboard(ddword, ddword, ddword, ddword);
-void on_syscall(ddword, ddword, ddword, ddword);
+void on_syscall(ddword, ddword, ddword, ddword, ddword);
 
 #endif

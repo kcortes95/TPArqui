@@ -71,34 +71,6 @@ void putcxy(char c, uint8_t x, uint8_t y) {
 	video_start_ptr[y*BUFFER_COL + x + BUFFER_ATTRIB] = current_colour;
 }
 
-
-/*
-void printf(const char * string, int mod, ...){
-	char c;
-	va_list listpointer;
-	va_start(listpointer, mod);
-	for(int i=0; string[i] != '\0'; i++){
-		c = string[i];
-		if(c == '%'){
-			switch(string[i+1]){
-				case 'd':	print_number(va_arg(listpointer,int));
-							i++;
-							break;
-				case 's':	print_message(va_arg(listpointer,char *), mod);
-							i++;
-							break;
-				default: 	_put_char(string[i], mod);
-							break;
-			}
-		}
-		else{
-			_put_char(string[i], mod); // 15 para fondo negro letras blancas
-		}
-	}
-	va_end(listpointer);
-}
-*/
-
 void putc(char c) {
 
 	if (MIN_VISIBLE_ASCII <= c && c <= MAX_VISIBLE_ASCII) {
@@ -107,7 +79,7 @@ void putc(char c) {
 		current_offset += 2;
 	} else {
 		if (c == CHAR_NEWLINE) {
-			current_offset = (current_offset / (BUFFER_COL*2) + 1 ) * BUFFER_COL * 2;
+			current_offset = ((current_offset+1) / (BUFFER_COL*2) + 1 ) * BUFFER_COL * 2;
 			// current_offset += BUFFER_COL*2 - current_offset % BUFFER_COL;
 		} else if (c == CHAR_BACKSPACE) {
 			video_start_ptr[current_offset - 2 + BUFFER_CHAR] = 0;
@@ -117,11 +89,13 @@ void putc(char c) {
 	}
 	if (current_offset >= BUFFER_COL*BUFFER_ROW*2) {
 		// Vemos
+		move_up();
+		// current_offset -= BUFFER_COL*2;
 	}
 	set_blink(current_offset/2);
 }
 
-void putnum(int i, int base) {
+void putnum(int64_t i, uint8_t base) {
 	char *buf, *res;
 
 	res = itoa(i, buf, base);
@@ -130,16 +104,29 @@ void putnum(int i, int base) {
 	
 }
 
-void putbin(int i) {
+void putbin(int64_t i) {
 	putnum(i, 2);
 }
 
-void puti(int i) {
-	putnum(i, 10);
+void puti(int64_t i) {
+
+	string s;
+
+	s = itoa10(i);
+
+	// putnum(i, 10);
+	prints(s);
 }
 
-void puthex(int i) {
-	putnum(i, 16);
+void puthex(int64_t i) {
+	// putnum(i, 16);
+	// 
+	string s;
+
+	s = itoa16(i);
+
+	// putnum(i, 10);
+	prints(s);
 }
 
 void prints(char *s) {

@@ -1,6 +1,10 @@
 #include "include/keyboard.h"
 #include "../arch/include/arch.h"
 
+#include "include/video.h";
+
+static int on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3);
+
 keyboard_status_t keyboard_status;
 keyboard_buffer_t keyboard_buffer;
 
@@ -79,8 +83,7 @@ void key_received(unsigned char keycode) {
 
 		unsigned char ascii_value = KEYBOARD_MAP[alternate][keycode];
 
-		if (!(ascii_value == NOT_PRINTABLE)){
-			// kputChar(ascii_value);
+		if (!(ascii_value == NOT_PRINTABLE)) {
 			insert_key(ascii_value);
 		}
 
@@ -95,14 +98,16 @@ void key_received(unsigned char keycode) {
  * @param arg2 Lo esucho al pedo
  * @param arg3 Lo esucho al pedo
  */
-void on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3) {
+static int on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3) {
 
 	unsigned char status = _inport(KEYBOARD_STATUS_PORT);
 	unsigned char keycode = _inport(KEYBOARD_DATA_PORT);
-	
+
 	if (status &  0x01) {
 		key_received(keycode);
 	}
+
+	return 0;
 
 }
 

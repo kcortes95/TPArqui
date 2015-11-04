@@ -1,7 +1,7 @@
-#include "../include/types.h"
+#include "../arch/include/types.h"
 #include "include/util.h"
 
-char* itoa(int value, char *str, int base) {
+string itoa(int32_t value, char *str, uint8_t base) {
 	
 	char *rc, *ptr, *low;
 
@@ -28,7 +28,7 @@ char* itoa(int value, char *str, int base) {
 	return rc;
 }
 
-int intlen(int n) {
+int intlen(int64_t n) {
 	int l = 0;
 	while (n != 0) {
 		n /= 10;
@@ -53,3 +53,55 @@ uint8_t to_bcd8(uint8_t n) {
 uint16_t to_bcd16(uint16_t n) {
 	return ((n & 0xf000)>>16)*1000 + ((n & 0x0f00)>>8) * 100 + to_bcd8(n & 0x00ff);
 }
+
+
+#define INT_DIGITS 19		/* enough for 64 bit integer */
+
+char *itoa10(int64_t i) {
+  /* Room for INT_DIGITS digits, - and '\0' */
+  static char buf[INT_DIGITS + 2];
+  char *p = buf + INT_DIGITS + 1;	/* points to terminating '\0' */
+  if (i >= 0) {
+    do {
+      *--p = '0' + (i % 10);
+      i /= 10;
+    } while (i != 0);
+    return p;
+  }
+  else {			/* i < 0 */
+    do {
+      *--p = '0' - (i % 10);
+      i /= 10;
+    } while (i != 0);
+    *--p = '-';
+  }
+  return p;
+}
+
+char *itoa16(int64_t i) {
+  /* Room for INT_DIGITS digits, - and '\0' */
+  static char buf[INT_DIGITS + 2];
+  char *p = buf + INT_DIGITS + 1;	/* points to terminating '\0' */
+  uint8_t rem;
+  do {
+  	rem = i % 16;
+  	if (rem >= 10)
+  		*--p = 'A' + rem - 10;
+  	else
+  		*--p = '0' + rem;
+    i /= 16;
+  } while (i != 0);
+  return p;
+}
+
+char *itoa2(int64_t i) {
+  /* Room for INT_DIGITS digits, - and '\0' */
+  static char buf[64 + 2];
+  char *p = buf + 64 + 1;	/* points to terminating '\0' */
+  do {
+  	*--p = '0' + (i % 2);
+    i /= 2;
+  } while (i != 0);
+  return p;
+}
+

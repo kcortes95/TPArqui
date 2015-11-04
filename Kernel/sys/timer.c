@@ -3,11 +3,14 @@
 
 time_t millis_ellapsed = 0;
 
-void on_tick(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
+static int on_tick(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
+
+static int on_tick(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 	// Ignoro los parametros
-	
 
 	millis_ellapsed += TICK_INTERVAL;
+
+	return 0;
 }
 
 void wait(time_t millis) {
