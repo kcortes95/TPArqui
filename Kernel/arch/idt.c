@@ -1,4 +1,6 @@
-#include "idt.h"
+#include "include/idt.h"
+#include "include/ports.h"
+#include "include/interrupts.h"
 
 IDTR idtr;
 

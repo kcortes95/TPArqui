@@ -21,20 +21,20 @@ typedef enum {
 #define MAX_LISTENERS_ALLOWED 32
 
 typedef struct {
-	void (*call)(ddword id, ddword arg1, ddword arg2, ddword arg3);
+	void (*call)(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
 } listener_t;
 
 typedef struct {
 	listener_t listeners[MAX_LISTENERS_ALLOWED];
 	uint8_t size;
-} listeners_t;
+} listener_pool_t;
 
-void init_interrupts();
-error_t add_listener(interrupt_id id, listener_t listener);
+void init_interrupts(void);
+error_t add_listener(interrupt_id, listener_t);
 
-void on_interrupt(interrupt_id id);
-void on_timer_tick();
-void on_keyboard();
-void on_syscall();
+void on_interrupt(interrupt_id, ddword, ddword, ddword, ddword);
+void on_timer_tick(ddword, ddword, ddword, ddword);
+void on_keyboard(ddword, ddword, ddword, ddword);
+void on_syscall(ddword, ddword, ddword, ddword);
 
 #endif

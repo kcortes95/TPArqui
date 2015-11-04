@@ -1,7 +1,6 @@
-#include "../include/types.h"
 #include "../util/include/util.h"
 #include "include/video.h"
-#include "include/libasm.h"
+#include "../arch/include/arch.h"
 
 static char *video_start_ptr = (char *) VIDEO_START_ADDR;
 static uint16_t current_offset = 0;
@@ -10,15 +9,16 @@ static uint16_t current_offset = 0;
 static uint8_t current_colour = (COLOR_BLACK << 4) | (COLOR_LIGHT_GREY & 0x0f);
 
 void clc() {
-	int i = 0;
-	for (; i < BUFFER_COL*BUFFER_ROW; i+=2) {
+	uint16_t i = 0;
+	for (; i < BUFFER_COL*BUFFER_ROW*2; i+=2) {
 		video_start_ptr[i+BUFFER_CHAR] = 0;
 		video_start_ptr[i+BUFFER_ATTRIB] = current_colour;
 	}
+	current_offset = 0;
 }
 
 void clr(uint8_t row) {
-	uint8_t i = BUFFER_COL*row*2;
+	uint16_t i = BUFFER_COL*row*2;
 	for (; i < BUFFER_COL*row*4; i+=2) {
 		video_start_ptr[i+BUFFER_CHAR] = 0;
 		video_start_ptr[i+BUFFER_ATTRIB] = current_colour;
@@ -26,23 +26,24 @@ void clr(uint8_t row) {
 }
 
 void move_up() {
-	uint8_t i = BUFFER_COL*2;
+	uint16_t i = BUFFER_COL*2;
 	for (; i < BUFFER_COL*BUFFER_ROW; i += 2) {
 		video_start_ptr[i - BUFFER_COL*2 + BUFFER_CHAR] = video_start_ptr[i + BUFFER_CHAR];
 		video_start_ptr[i - BUFFER_COL*2 + BUFFER_ATTRIB] = video_start_ptr[i + BUFFER_ATTRIB];
 	}
 	clr(BUFFER_ROW-1);
+	current_offset = BUFFER_COL*(BUFFER_ROW-1)*2;
 }
 
 void set_blink(uint16_t position) {
 
 	// parte baja del puerto del cursor
-	out_port(BLINK_LOW_PORT, 0x0F);
-	out_port(BLINK_HIGH_PORT, (unsigned char) (position & 0xFF));
+	_outport(BLINK_LOW_PORT, 0x0F);
+	_outport(BLINK_HIGH_PORT, (unsigned char) (position & 0xFF));
 
 	// parte alta del puerto del cursor
-	out_port(BLINK_LOW_PORT, 0x0E);
-	out_port(BLINK_HIGH_PORT, (unsigned char) ((position & 0xFF00) >> 8));
+	_outport(BLINK_LOW_PORT, 0x0E);
+	_outport(BLINK_HIGH_PORT, (unsigned char) ((position & 0xFF00) >> 8));
 }
 
 void set_colour(uint8_t bg, uint8_t fg) {

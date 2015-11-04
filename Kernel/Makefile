@@ -1,8 +1,8 @@
 include Makefile.inc
 
 KERNEL=kernel.bin
-SOURCES=$(wildcard *.c) $(wildcard sys/*.c) $(wildcard util/*.c)
-SOURCES_ASM=$(wildcard asm/*.asm) $(wildcard sys/*.asm)
+SOURCES=$(wildcard *.c) $(wildcard arch/*.c) $(wildcard sys/*.c) $(wildcard util/*.c)
+SOURCES_ASM=$(wildcard asm/*.asm) $(wildcard arch/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 LOADERSRC=loader.asm

@@ -8,6 +8,10 @@
 
 #include "sys/include/video.h"
 
+#include "sys/include/timer.h"
+
+#include "sys/include/keyboard.h"
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -53,12 +57,23 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-int main() {
+void play_intro() {
 
-	init_idt();
-	init_interrupts();
+	uint8_t i = 0;
 
+	clc();
 
+	println("El TP de arqui esta booteando...");
+
+	wait(1200);
+
+	println("Hacete un cafecito. Ya arrancamos");
+
+	wait(1500);
+
+	println("Vamos??");
+
+	wait(1700);
 
 	clc();
 
@@ -88,9 +103,31 @@ int main() {
 	println("       _-'.-.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-`__`. .-.-.-.`-_");
 	println("    _-'.-.-.-.-. .-----.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-----. .-.-.-.-.`-_");
 
-	wait(500);
+	wait(2000);
 
-	clc();	
+	move_up();
+
+	for (; i < 80; i++) {
+		putc('*');
+		wait(80);
+	}
+
+	clc();
+
+
+
+}
+
+int main() {
+
+	init_idt();
+	init_interrupts();
+	init_timer();
+
+	play_intro();
+
+	// recien ahora activamos el teclado
+	// init_keyboard();
 
 
 	// Con esto ejecutamos Userland

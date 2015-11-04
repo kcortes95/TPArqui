@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define PIC_DATA_PORT 0x21
+
 #define IDT_SIZE 256
 
 typedef struct {
@@ -11,6 +13,8 @@ typedef struct {
 } IDTR;
 
 extern void _get_idtr(IDTR* idtr);
+
 void init_idt();
+void idt_set_handler(byte entry, ddword handler);
 
 #endif

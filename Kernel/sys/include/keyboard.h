@@ -1,7 +1,12 @@
 #ifndef __KEYBOARD_H__
 #define __KEYBOARD_H__
 
-#include "defines.h"
+// #include "defines.h"
+
+#include "../../arch/include/types.h"
+
+#define KEYBOARD_DATA_PORT 0x60
+#define KEYBOARD_STATUS_PORT 0x64
 
 #define NOT_PRINTABLE 0x0
 #define TOTAL_KEYS  59
@@ -31,7 +36,7 @@ typedef struct {
 } keyboard_buffer_t;
 
 void init_keyboard();
-void on_key_received(unsigned char keycode);
+void key_received(unsigned char keycode);
 void insert_key(unsigned char ascii_value);
 void kKBRemoveLastKey();
 unsigned char get_key();

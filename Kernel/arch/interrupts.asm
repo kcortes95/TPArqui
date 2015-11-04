@@ -1,13 +1,13 @@
+EXTERN on_keyboard
+EXTERN on_syscall
+EXTERN on_timer_tick
+
 GLOBAL _load_handler
 GLOBAL _get_idtr
 
 GLOBAL _keyboard_interrupt_handler
 GLOBAL _syscall_interrupt_handler
 GLOBAL _tt_interrupt_handler
-
-EXTERN on_keyboard
-EXTERN on_syscall
-EXTERN on_timer_tick
 
 section .text
 

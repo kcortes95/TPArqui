@@ -1,5 +1,5 @@
-#include "../include/types.h"
-#include "include/libasm.h"
+#include "../arch/include/types.h"
+#include "../arch/include/arch.h"
 #include "include/time.h"
 #include "include/video.h"
 
@@ -13,22 +13,22 @@ void getTime(int GMT){
 
 //TODO: Esto deberiamos hacerlo mejor! Estamos repitiendo código
 int getHours(){
-	out_port(0x70,4); //horas
-	int hBCD = in_port(0x71);
+	_outport(0x70,4); //horas
+	int hBCD = _inport(0x71);
 	return BCDtoNumber(hBCD);
 } 
 
 //TODO: corregir!
 int getMinutes(){
-	out_port(0x70,2); //minutos
-	int mBCD = in_port(0x71);
+	_outport(0x70,2); //minutos
+	int mBCD = _inport(0x71);
 	return BCDtoNumber(mBCD);
 }
 
 //TODO: corregir!
 int getSeconds(){
-	out_port(0x70,4); //segundos
-	int sBCD = in_port(0x71);
+	_outport(0x70,4); //segundos
+	int sBCD = _inport(0x71);
 	return BCDtoNumber(sBCD);
 }
 

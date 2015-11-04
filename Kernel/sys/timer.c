@@ -1,8 +1,9 @@
-#include "timer.h"
+#include "../arch/include/interrupts_handler.h"
+#include "include/timer.h"
 
 time_t millis_ellapsed = 0;
 
-void on_tick(ddword id, ddword arg1, ddword arg2, ddword arg3) {
+void on_tick(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 	// Ignoro los parametros
 	
 
@@ -13,7 +14,7 @@ void wait(time_t millis) {
 
 	time_t eta = millis_ellapsed + millis;
 
-	while ( eta > millis_ellapsed);	
+	while ( eta > millis_ellapsed);
 }
 
 void init_timer() {

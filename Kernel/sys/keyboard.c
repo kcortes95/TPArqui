@@ -1,4 +1,5 @@
 #include "include/keyboard.h"
+#include "../arch/include/arch.h"
 
 keyboard_status_t keyboard_status;
 keyboard_buffer_t keyboard_buffer;
@@ -20,15 +21,7 @@ unsigned char KEYBOARD_MAP[2][TOTAL_KEYS] = {
 	}
 };
 
-void init_keyboard() {
 
-	int i = 0;
-
-	for (; i < KEYBOARD_BUFFER_SIZE; i++) {
-		keyboard_buffer.buffer[i] = EMPTY;
-	}
-
-}
 
 bool is_buffer_empty() {
 	return (keyboard_buffer.buffer[keyboard_buffer.read_index] == EMPTY);
@@ -64,7 +57,7 @@ unsigned char get_key() {
 	return key;
 }
 
-void on_key_received(unsigned char keycode) {
+void key_received(unsigned char keycode) {
 
 	if (keycode == CAPS_LOCK) {
 		keyboard_status.caps_lock_enabled = !keyboard_status.caps_lock_enabled;
@@ -77,8 +70,8 @@ void on_key_received(unsigned char keycode) {
 	}
 	else if(!(keycode & KEY_RELEASED)) {
 
-		bool is_alpha = is_alpha(keycode);
-		bool alternate = (is_alpha && keyboard_status.caps_lock_enabled);
+		bool _is_alpha = is_alpha(keycode);
+		bool alternate = (_is_alpha && keyboard_status.caps_lock_enabled);
 
 		if (keyboard_status.shift_enabled) {
 			alternate = !alternate;
@@ -87,10 +80,52 @@ void on_key_received(unsigned char keycode) {
 		unsigned char ascii_value = KEYBOARD_MAP[alternate][keycode];
 
 		if (!(ascii_value == NOT_PRINTABLE)){
-			kputChar(ascii_value);
+			// kputChar(ascii_value);
 			insert_key(ascii_value);
 		}
 
 	}
 
 }
+
+/**
+ * Listener de interrupcion de teclado
+ * @param id   Lo esucho al pedo
+ * @param arg1 Lo esucho al pedo
+ * @param arg2 Lo esucho al pedo
+ * @param arg3 Lo esucho al pedo
+ */
+void on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3) {
+
+	unsigned char status = _inport(KEYBOARD_STATUS_PORT);
+	unsigned char keycode = _inport(KEYBOARD_DATA_PORT);
+	
+	if (status &  0x01) {
+		key_received(keycode);
+	}
+
+}
+
+void register_listener() {
+
+	listener_t keyboard_listener;
+
+	keyboard_listener.call = &on_ack_keyboard;
+
+	add_listener(KEYBOARD, keyboard_listener);
+
+}
+
+void init_keyboard() {
+
+	int i = 0;
+
+	for (; i < KEYBOARD_BUFFER_SIZE; i++) {
+		keyboard_buffer.buffer[i] = EMPTY;
+	}
+
+	register_listener();
+
+}
+
+
