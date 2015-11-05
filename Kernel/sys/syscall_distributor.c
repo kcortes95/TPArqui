@@ -2,9 +2,141 @@
 #include "include/syscalls.h"
 #include "include/keyboard.h"
 #include "include/video.h"
+#include "include/sound.h"
+#include "../util/include/util.h"
+#include "include/clock.h"
 
-int character = 0x0;
+static int on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
 
+static int syscall_read(ddword fd, ddword buf, ddword size);
+static int syscall_write(ddword fd, ddword buf, ddword size);
+static int syscall_get_time(ddword time_ptr, ddword arg2, ddword arg3);
+static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3);
+static int syscall_beep(ddword length, ddword freq, ddword arg3);
+
+int (*syscalls[BEEP-READ])(ddword, ddword, ddword);
+
+static int syscall_get_time(ddword time_ptr, ddword arg2, ddword arg3) {
+	date_t *time = (date_t*)time_ptr;
+	uint8_t registerB = clock_get(REGB);
+
+	uint8_t sec 	= clock_get_seconds();
+	uint8_t min 	= clock_get_minutes();
+	uint8_t hour	= clock_get_hours();
+	uint8_t mon	= clock_get_month();
+	uint8_t year	= clock_get_year();
+	uint8_t day	= clock_get_day_of_month();
+
+    // Convert BCD to binary values if necessary
+	if (!(registerB & 0x04)) {
+		sec 	= BCD2BIN(sec);
+		min 	= BCD2BIN(min);
+		hour 	= BCD2BIN(hour);
+		day 	= BCD2BIN(day);
+		mon 	= BCD2BIN(mon);
+		year 	= BCD2BIN(year);
+	}
+
+	// Convert 12 hour clock to 24 hour clock if necessary
+	if (!(registerB & 0x02) && (hour & 0x80)) {
+		hour = ((hour & 0x7F) + 12) % 24;
+	}
+
+	time->sec 	= sec;
+	time->min 	= min;
+	time->hour	= hour;
+	time->mon	= mon;
+	time->year	= year;
+	time->day	= day;
+
+	return 0;
+}
+
+static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3) {
+	date_t *time = (date_t*)time_ptr;
+
+	uint8_t registerB = clock_get(REGB);
+
+	uint8_t sec 	= time->sec;
+	uint8_t min 	= time->min;
+	uint8_t hour	= time->hour;
+	uint8_t mon	= time->mon;
+	uint8_t year	= time->year;
+	uint8_t day	= time->day;
+
+    // Convert binary to BCD values if necessary
+	if (!(registerB & 0x04)) {
+		sec 	= BIN2BCD(sec);
+		min 	= BIN2BCD(min);
+		hour 	= BIN2BCD(hour);
+		day 	= BIN2BCD(day);
+		mon 	= BIN2BCD(mon);
+		year 	= BIN2BCD(year);
+
+	}
+
+	// Convert 12 hour clock to 24 hour clock if necessary
+	if (!(registerB & 0x02) && (hour & 0x80)) {
+		hour = ((hour & 0x7F) + 12) % 24;
+	}
+
+
+
+	clock_set_seconds(sec);
+	clock_set_minutes(min);
+	clock_set_hours(hour);
+	clock_set_month(mon);
+	clock_set_year(year);
+	clock_set_day_of_month(day);
+
+	return 0;
+}
+
+static int syscall_read(ddword fd, ddword buf, ddword size) {
+	int i = 0;
+	char c;
+	char *buffer;
+	buffer = (char*)buf;
+
+	do {
+
+		if (!is_buffer_empty()) {
+			c = get_key();
+			buffer[i++] = c;
+		} 
+	} while (i < size);
+
+	return size;
+
+}
+
+static int syscall_write(ddword fd, ddword buf, ddword size) {
+
+	char* buffer;
+	buffer = (char*)buf;
+
+	if (fd == STDERR) {
+		set_colour(COLOR_BLACK, COLOR_RED);
+	}
+
+	if (size > 1) {
+		prints(buffer);
+	} else {
+		putc(*buffer);
+	}
+
+	if (fd == STDERR) {
+		set_colour(COLOR_BLACK, COLOR_LIGHT_GREY);
+	}
+	return size;
+
+}
+
+static int syscall_beep(ddword length, ddword freq, ddword arg3) {
+	beep();
+
+	return 0;
+}
 
 /**
  * Listener de syscalls
@@ -13,43 +145,9 @@ int character = 0x0;
  * @param arg2 argumento 2
  * @param arg3 argumento 3
  */
-int on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
+static int on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 
-	int i = 0;
-	char c;
-	char *buf;
-
-
-	if (id == READ) {
-
-		// arg1 = fd
-		// arg2 = buf
-		// arg3 = size
-
-		buf = (char*)arg2;
-
-		do {
-
-			if (!is_buffer_empty()) {
-				c = get_key();
-				buf[i++] = c;
-			} 
-		} while (i < arg3);
-
-		// buf[i] = 0;
-
-	} else if (id == WRITE) {
-		
-		// arg1 = fd
-		// arg2 = buf
-		// arg3 = size
-		 
-		buf = (char*)arg2;
-
-		putc(*buf);
-	}
-
-	return 2;
+	return syscalls[(uint8_t)id](arg1, arg2, arg3);
 }
 
 /**
@@ -58,6 +156,12 @@ int on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 void init_syscalls() {
 
 	listener_t syscall_listener;
+
+	syscalls[READ] = &syscall_read;
+	syscalls[WRITE] = &syscall_write;
+	syscalls[GET_TIME] = &syscall_get_time;
+	syscalls[SET_TIME] = &syscall_set_time;
+	syscalls[BEEP] = &syscall_beep;
 
 	syscall_listener.call = &on_ack_syscall;
 

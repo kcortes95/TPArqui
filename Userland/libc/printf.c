@@ -6,7 +6,7 @@ static int print_dec(int fd, int n);
 static int print_oct(int fd, int n);
 static int print_hex(int fd, int n);
 static int print_chr(int fd, int c);
-static int print_to_base(int value, char * buffer, int base);
+static char* print_to_base(int value, char * buffer, int base, int* digits);
 
 int printf(char * fmt, ...) {
 	va_list ap;
@@ -102,56 +102,46 @@ static int print_chr(int fd, int c) {
 static int print_dec(int fd, int n) {
 	int count;
 	char buffer[20] = {0};
-	count = print_to_base(n, buffer, 10);
-	fputsn(fd, buffer, count);
+	char *str;
+	str = print_to_base(n, buffer, 10, &count);
+	fputsn(fd, str, count);
 	return count;
 }
 
 static int print_oct(int fd, int n) {
 	int count;
 	char buffer[20] = {0};
-	count = print_to_base(n, buffer, 8);
-	fputsn(fd, buffer, count);
+	char *str;
+	str = print_to_base(n, buffer, 8, &count);
+	fputsn(fd, str, count);
 	return count;
 }
 
 static int print_hex(int fd, int n) {
 	int count;
 	char buffer[20] = {0};
-	count = print_to_base(n, buffer, 16);
-	fputsn(fd, buffer, count);
+	char *str;
+	str = print_to_base(n, buffer, 16, &count);
+	fputsn(fd, str, count);
 	return count;
 }
 
 
 /* taken from naiveConsole :) */
-static int print_to_base(int value, char * buffer, int base) {
-	char *p = buffer;
-	char *p1, *p2;
-	int digits = 0;
+static char* print_to_base(int value, char * buffer, int base, int *digits) {
+	char *p = buffer + 19;
+	// char *p1, *p2;
+	int d = 0;
+	int rem;
 
 	//Calculate characters for each digit
 	do {
-		int remainder = value % base;
-		*p++ = remainder + ((remainder < 10) ? '0' : 'A' - 10);
-		digits++;
-	}
-	while (value /= base);
+		rem = value % base;
+		*--p = rem + ((rem < 10) ? '0' : 'A' - 10);
+		d++;
+	} while (value /= base);
 
-	// Terminate string in buffer.
-	*p = 0;
+	*digits = d;
 
-	//Reverse string in buffer.
-	p1 = buffer;
-	p2 = p - 1;
-	while (p1 < p2)
-	{
-		char tmp = *p1;
-		*p1 = *p2;
-		*p2 = tmp;
-		p1++;
-		p2--;
-	}
-
-	return digits;
+	return p;
 }

@@ -12,7 +12,7 @@ void clear(char**, int);
 void date(char**, int);
 void time(char**, int);
 void set_date(char**, int);
-void set_time(char**, int);
+void settime(char**, int);
 int parse_date(char*, int*, int*, int*);
 int parse_time(char*, int*, int*, int*);
 int is_num(char);

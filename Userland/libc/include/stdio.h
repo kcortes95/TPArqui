@@ -1,5 +1,5 @@
-#ifndef __STD_IO__
-#define __STD_IO__
+#ifndef __STD_IO_H__
+#define __STD_IO_H__
 
 #define STDIN 	0
 #define STDOUT 	1

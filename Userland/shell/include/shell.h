@@ -23,6 +23,7 @@ void print_commands(void);
 int get_cmd_count(void);
 void initialize_cmd_table(void);
 void print_shell_text();
+void print_shell_error();
 
 
 #endif

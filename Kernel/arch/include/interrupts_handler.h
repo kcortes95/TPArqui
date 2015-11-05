@@ -1,5 +1,5 @@
-#ifndef __ARCH_INTERRUPTS_HANDLERS__
-#define __ARCH_INTERRUPTS_HANDLERS__
+#ifndef __ARCH_INTERRUPTS_HANDLERS_H__
+#define __ARCH_INTERRUPTS_HANDLERS_H__
 
 #include "interrupts.h"
 
@@ -9,7 +9,7 @@ typedef enum {
 	CLEAR_SCREEN,
 	GET_TIME,
 	SET_TIME,
-	PLAY_SOUND
+	BEEP
 } syscall_id;
 
 typedef enum {

@@ -1,17 +1,17 @@
-#ifndef __LIBC__
-#define __LIBC__
+#ifndef __LIBC_H__
+#define __LIBC_H__
 
 #include <stdint.h>
 
 /* common structs */
-struct rtc_time {
-	unsigned char sec;
-	unsigned char min;
-	unsigned char hour;
-	unsigned char day;
-	unsigned char mon;
-	unsigned char year;
-};
+typedef struct {
+	uint8_t sec;
+	uint8_t min;
+	uint8_t hour;
+	uint8_t day;
+	uint8_t mon;
+	uint8_t year;
+} date_t;
 
 typedef enum {
 	READ = 0,
@@ -19,15 +19,17 @@ typedef enum {
 	CLEAR_SCREEN,
 	GET_TIME,
 	SET_TIME,
-	PLAY_SOUND
+	BEEP
 } syscall_id;
 
 /* syscalls */
 
-extern int syscaller(int, int, char*, int);
+extern int syscaller(int, int, int, int);
 
-extern void gettime(struct rtc_time *);
-extern void settime(struct rtc_time *);
+// extern void gettime(rtc_time *);
+// extern void settime(rtc_time *);
+int get_time(date_t *);
+int set_time(date_t *);
 // extern int write(unsigned int fd, char * str, unsigned int size);
 int write(int fd, char * str, int size);
 extern void pause(void);
@@ -35,7 +37,9 @@ extern void pause(void);
 int read(int fd, char * str, int size);
 extern void halt(void);
 extern void shutdown(void);
-extern void beep(void);
+// extern void beep(void);
+int beepwo(uint32_t, uint32_t, uint8_t);
+int beep();
 extern int ioctl(unsigned int fd, unsigned long request, void * params);
 
 #define IOCTL_MOVE 0

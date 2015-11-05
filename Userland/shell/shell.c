@@ -48,9 +48,9 @@ void update_shell() {
 			putc('\b');
 			putc(' ');
 			putc('\b');
-			curr_pos--;
-			shell_buffer[curr_pos] = '\0';
+			shell_buffer[--curr_pos] = '\0';
 		} else {
+			printf("beep");
 			beep();
 		}
 
@@ -194,14 +194,13 @@ void initialize_cmd_table() {
 	cmd_table[11].name = "commands";
 	cmd_table[12].name = "printascii";
 	cmd_table[13].name = "setcolor";
-	cmd_table[14].name = "scdelay";
 
 	cmd_table[0].func = &echo;
 	cmd_table[1].func = &clear;
 	cmd_table[2].func = &date;
 	cmd_table[3].func = &time;
 	cmd_table[4].func = &set_date;
-	cmd_table[5].func = &set_time;
+	cmd_table[5].func = &settime;
 	cmd_table[6].func = &getchar_cmd;
 	cmd_table[7].func = &printf_cmd;
 	cmd_table[8].func = &scanf_cmd;
@@ -210,7 +209,6 @@ void initialize_cmd_table() {
 	cmd_table[11].func = &commands;
 	cmd_table[12].func = &print_ascii_table;
 	cmd_table[13].func = &setcolor;
-	cmd_table[14].func = &screen_saver_delay;
 
 	cmd_table[0].help = "Echo repeats the input string following echo statement \n example: \"echo Hello I am using echo\"";
 	cmd_table[1].help = "Clears the screen, uses no arguments, therefore will ignore any ones received\n";

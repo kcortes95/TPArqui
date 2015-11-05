@@ -22,18 +22,17 @@ void help(char *argv[], int argc) {
 	}
 }
 
-
 void echo(char** args, int argc) {
 	int i;
-	for(i = 0; i < argc; i++) {
+	for (i = 0; i < argc; i++) {
 		printf("%s ", args[i]);
 	}
 	putc('\n');
 }
 
 void clear(char** args, int argc) {
-    ioctl(STDOUT, IOCTL_CLR,    (void *) 0);
-    ioctl(STDOUT, IOCTL_MOVE,   (void *) 0);
+	ioctl(STDOUT, IOCTL_CLR,    (void *) 0);
+	ioctl(STDOUT, IOCTL_MOVE,   (void *) 0);
 }
 
 void commands(char** args, int argc) {
@@ -43,8 +42,9 @@ void commands(char** args, int argc) {
 
 
 void date(char** args, int argc) {
-	struct rtc_time time_struct;
-	gettime(&time_struct);
+	date_t time_struct;
+	get_time(&time_struct);
+	
 	printf("%d/%d/%d\n",
 		time_struct.day,
 		time_struct.mon,
@@ -53,8 +53,9 @@ void date(char** args, int argc) {
 }
 
 void time(char** args, int argc) {
-	struct rtc_time time_struct;
-	gettime(&time_struct);
+	date_t time_struct;
+	get_time(&time_struct);
+
 	printf("%d:%d:%d\n",
 		time_struct.hour,
 		time_struct.min,
@@ -63,31 +64,30 @@ void time(char** args, int argc) {
 }
 
 void set_date(char** args, int argc) {
-	struct rtc_time time_struct;
+	date_t time_struct;
 	int days, months, years;
 
-	gettime(&time_struct);
-	if(argc <1){
+	get_time(&time_struct);
+	if (argc <1){
 		fprintf(STDERR, INVALID_DATE);
 		return;
 	}
-	if(!parse_date(args[0], &days, &months, &years)){
+	if (!parse_date(args[0], &days, &months, &years)){
 		fprintf(STDERR, INVALID_DATE);
 		return;
-
 	}
 	time_struct.year = years;
 	time_struct.mon = months;
 	time_struct.day = days;
 
-	settime(&time_struct);
+	set_time(&time_struct);
 }
 
-void set_time(char** args, int argc) {
-	struct rtc_time time_struct;
+void settime(char** args, int argc) {
+	date_t time_struct;
 	int seconds, minutes, hours;
 
-	gettime(&time_struct);
+	get_time(&time_struct);
 	if (argc < 1) {
 		fprintf(STDERR, INVALID_TIME);
 		return;
@@ -102,10 +102,10 @@ void set_time(char** args, int argc) {
 	time_struct.min = minutes;
 	time_struct.hour = hours;
 
-	settime(&time_struct);
+	set_time(&time_struct);
 
 }
- 
+
 void halt_system(char** args, int argc) {
 	halt();
 }
@@ -119,11 +119,11 @@ void print_ascii_table(char** args, int argc) {
 		if (i % 8) {
 			printf(" \t| ");
 		} else {
-    		putc('\n');
-    	}
+			putc('\n');
+		}
 	}
 
-    putc('\n');
+	putc('\n');
 }
 
 
@@ -163,32 +163,9 @@ void setcolor(char** args, int argc) {
 	clear(args, argc);
 }
 
-
-void screen_saver_delay(char** args, int argc) {
-	int seconds, minutes, hours;
-	uint64_t delay;
-	if(argc < 1){
-		fprintf(STDERR, INVALID_SCREEN_SAVER_TIME);
-		return;
-	}	
-	if(!parse_time(args[0], &seconds, &minutes, &hours)){
-		fprintf(STDERR, INVALID_SCREEN_SAVER_TIME);
-		return;
-	}
-	delay = seconds + minutes * 60 + hours * 3600;
-	if(delay > 86400 || delay < 5 ){
-		fprintf(STDERR, INVALID_SCREEN_SAVER_TIME);
-		return;
-	}
-	//set screensaver delay.
-	int result = ioctl(STDIN, IOCTL_INACTIVE, (void *) delay);
-	printf("set to %d seconds.\n", result);
-	return;
-}
-
-
-
-/*****Auxiliary functions for commands*****/
+/*==========================================
+--------   Auxiliary functions for commands
+===========================================*/
 
 
 
@@ -196,7 +173,7 @@ void screen_saver_delay(char** args, int argc) {
 
 
 //Receives input string, parses it for a date, returns 1 if valid, 0 if not
-int parse_date(char* date_string, int* days, int*months, int*years) {
+int parse_date(char* date_string, int* days, int* months, int* years) {
 	int len =0;
 	len = strlen(date_string);
 	if (len !=8) {
@@ -224,25 +201,25 @@ int parse_date(char* date_string, int* days, int*months, int*years) {
 
 }
 
-int parse_time(char* time_string, int* seconds, int*minutes, int*hours) {	
+int parse_time(char* time_string, int* seconds, int* minutes, int* hours) {	
 	int len =0;
 	len = strlen(time_string);
-	if(len !=8) {
+	if (len !=8) {
 		return 0;
 	}
-	if(time_string[2]!= ':' || time_string[5] != ':') {
+	if (time_string[2]!= ':' || time_string[5] != ':') {
 		return 0;	
 	}
 	//seconds
-	if( !is_num(time_string[0]) || !is_num(time_string[1])) {
+	if ( !is_num(time_string[0]) || !is_num(time_string[1])) {
 		return 0;
 	}
 	//minutes
-	if( !is_num(time_string[3]) || !is_num(time_string[4])) {
+	if ( !is_num(time_string[3]) || !is_num(time_string[4])) {
 		return 0;
 	}
 	//hours
-	if( !is_num(time_string[6]) || !is_num(time_string[7])) {
+	if ( !is_num(time_string[6]) || !is_num(time_string[7])) {
 		return 0;
 	}
 	*seconds = (time_string[0]-'0')*10 + (time_string[1]-'0');
@@ -253,7 +230,7 @@ int parse_time(char* time_string, int* seconds, int*minutes, int*hours) {
 
 
 int is_num(char c) {
-	if( (c >= '0') && (c<+ '9')) {
+	if ( (c >= '0') && (c<= '9')) {
 		return 1;
 	}
 	return 0;
@@ -261,13 +238,13 @@ int is_num(char c) {
 
 int valid_time(int sec, int min, int hrs) {
 
-	if( sec >60 || sec < 0	||
+	if ( sec >60 || sec < 0||
 		min >60 || min < 0	||
-		hrs >24 || sec < 0) {
+		hrs >24 || sec < 0)
+	{
 		return 0;
 	}
 	return 1;
-
 }
 
 int valid_date(int day, int month, int year) {
@@ -348,7 +325,7 @@ void reset_vect(char vec[]) {
 
 
 void help_error_print() {
-	printf("\nInvoke help as follows: \"help \"command_name\"\".\nTo see list of available commands type \"commands\"");	
+	printf("\nInvoke help as follows: \"help \"command_name\"\".\nTo see list of available commands type \"commands\"\n");	
 }
 
 
