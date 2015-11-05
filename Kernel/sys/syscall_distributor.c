@@ -13,7 +13,7 @@ int character = 0x0;
  * @param arg2 argumento 2
  * @param arg3 argumento 3
  */
-void on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
+int on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 
 	int i = 0;
 	char c;
@@ -36,6 +36,8 @@ void on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 			} 
 		} while (i < arg3);
 
+		// buf[i] = 0;
+
 	} else if (id == WRITE) {
 		
 		// arg1 = fd
@@ -44,7 +46,7 @@ void on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 		 
 		buf = (char*)arg2;
 
-		prints(buf);
+		putc(*buf);
 	}
 
 	return 2;

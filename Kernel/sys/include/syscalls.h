@@ -4,7 +4,7 @@
 #include "../../arch/include/types.h"
 #include "../../arch/include/interrupts_handler.h"
 
-void on_ack_syscall(syscall_id, ddword, ddword, ddword);
+int on_ack_syscall(syscall_id, ddword, ddword, ddword);
 
 void init_syscalls();
 

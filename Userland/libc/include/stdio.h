@@ -23,8 +23,8 @@ int fprintf(int fd, char *fmt, ...);
 int printf(char *fmt, ...);
 
 
-int fgetc(int fd);
-int getc(void);
+char fgetc(int fd);
+char getc(void);
 int fgetsn(int fd, char * c, int n);
 int fgets(int fd, char * c, unsigned int n);
 int gets(char * c, unsigned int n);

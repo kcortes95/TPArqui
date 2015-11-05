@@ -14,7 +14,7 @@ void ungetc(char c) {
 	fungetc(STDIN, c);
 }
 
-int fgetc(int fd) {
+char fgetc(int fd) {
 	char c;
 	int has_data = 0;
 	if (unchar != EOF) {
@@ -29,7 +29,7 @@ int fgetc(int fd) {
 	return c;
 }
 
-int getc(void) {
+char getc(void) {
 	return fgetc(STDIN);
 }
 

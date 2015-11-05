@@ -54,7 +54,7 @@ void update_shell() {
 			beep();
 		}
 
-	} else if(curr_pos >= SHELL_BUFFER_SIZE-2) {
+	} else if (curr_pos >= SHELL_BUFFER_SIZE-2) {
 		//sound beep
 		beep();
 		return;

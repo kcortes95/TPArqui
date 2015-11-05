@@ -27,7 +27,7 @@ void clr(uint8_t row) {
 
 void move_up() {
 	uint16_t i = BUFFER_COL*2;
-	for (; i < BUFFER_COL*BUFFER_ROW; i += 2) {
+	for (; i < BUFFER_COL*BUFFER_ROW*2; i += 2) {
 		video_start_ptr[i - BUFFER_COL*2 + BUFFER_CHAR] = video_start_ptr[i + BUFFER_CHAR];
 		video_start_ptr[i - BUFFER_COL*2 + BUFFER_ATTRIB] = video_start_ptr[i + BUFFER_ATTRIB];
 	}
