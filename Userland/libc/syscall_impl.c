@@ -23,3 +23,7 @@ int get_time(date_t *date) {
 int set_time(date_t *date) {
 	return syscaller((int)SET_TIME, (uintptr_t)date, 0, 0);
 }
+
+int halt() {
+	return syscaller
+}
