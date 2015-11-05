@@ -10,7 +10,7 @@
 char shell_buffer[SHELL_BUFFER_SIZE];
 int curr_pos = 0;
 
-cmd_entry cmd_table[15];
+cmd_entry cmd_table[14];
 int cmd_count = (sizeof(cmd_table) / sizeof(cmd_entry));
 
 void init_shell() {
@@ -32,25 +32,24 @@ void update_shell() {
 	char key;
 	key = getc();
 
-	if(key == 0) {
+	if (key == 0) {
 		return;
 	}
 
-	if(key == '\n') {
+	if (key == '\n') {
 		putc('\n');
 		shell_buffer[curr_pos] = 0;
 		excecute_command(shell_buffer);
 		print_shell_text();
 		clean_buffer();
 
-	} else if (key == '\b') {
-		if(curr_pos > 0){
+	} else if ( key == '\b' ) {
+		if ( curr_pos > 0) {
 			putc('\b');
 			putc(' ');
 			putc('\b');
 			shell_buffer[--curr_pos] = '\0';
 		} else {
-			printf("beep");
 			beep();
 		}
 
@@ -190,7 +189,7 @@ void initialize_cmd_table() {
 	cmd_table[7].name = "printf";
 	cmd_table[8].name = "scanf";
 	cmd_table[9].name = "help";
-	cmd_table[10].name = "halt";
+	cmd_table[10].name = "shutdown";
 	cmd_table[11].name = "commands";
 	cmd_table[12].name = "printascii";
 	cmd_table[13].name = "setcolor";
@@ -224,5 +223,4 @@ void initialize_cmd_table() {
 	cmd_table[11].help = "Displays list of available commands\n";
 	cmd_table[12].help = "Prints entire list of ascii characters in order\n";
 	cmd_table[13].help = "Sets the console color (duh)\n";
-	cmd_table[14].help = "Sets the time interval that must pass before screen saver is activated. Format must be:  ss:mm:hh; Example: \"scdelay 23:23:23\"\n";
 }

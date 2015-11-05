@@ -31,8 +31,8 @@ void echo(char** args, int argc) {
 }
 
 void clear(char** args, int argc) {
-	ioctl(STDOUT, IOCTL_CLR,    (void *) 0);
-	ioctl(STDOUT, IOCTL_MOVE,   (void *) 0);
+	// ioctl(STDOUT, IOCTL_CLR,    (void *) 0);
+	// ioctl(STDOUT, IOCTL_MOVE,   (void *) 0);
 }
 
 void commands(char** args, int argc) {
@@ -107,7 +107,7 @@ void settime(char** args, int argc) {
 }
 
 void halt_system(char** args, int argc) {
-	halt();
+	shutdown();
 }
 
 void print_ascii_table(char** args, int argc) {
@@ -159,7 +159,7 @@ void setcolor(char** args, int argc) {
 		return;
 	}
 
-	ioctl(STDOUT, IOCTL_SET_COLOR, IOCTL_COLOR(fore, back));
+	// ioctl(STDOUT, IOCTL_SET_COLOR, IOCTL_COLOR(fore, back));
 	clear(args, argc);
 }
 
@@ -315,7 +315,7 @@ void scanf_cmd(char *argv[], int argc) {
 
 void reset_vect(char vec[]) {
 	int i;
-	for(i=0; i<50; i++ ) {
+	for (i = 0; i < 50; i++ ) {
 		vec[i] = 0;
 	}
 }

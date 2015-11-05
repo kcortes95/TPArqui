@@ -15,6 +15,7 @@ uint8_t get_bg_colour();
 void set_blink(uint16_t position);
 
 void putcxy(char c, uint8_t x, uint8_t y);
+void putscxy(char* c, uint8_t x, uint8_t y);
 void putc(char c);
 void prints(string s);
 void println(string s);

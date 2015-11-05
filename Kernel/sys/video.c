@@ -67,8 +67,16 @@ uint8_t get_y() {
 }
 
 void putcxy(char c, uint8_t x, uint8_t y) {
-	video_start_ptr[y*BUFFER_COL + x + BUFFER_CHAR] = c;
-	video_start_ptr[y*BUFFER_COL + x + BUFFER_ATTRIB] = current_colour;
+	video_start_ptr[y*BUFFER_COL*2 + x*2 + BUFFER_CHAR] = c;
+	video_start_ptr[y*BUFFER_COL*2 + x*2 + BUFFER_ATTRIB] = current_colour;
+}
+
+void putsxy(char* s, uint8_t x, uint8_t y) {
+	int i = x;
+	while (*s != 0) {
+		putcxy(*s, i++, y);
+		s++;
+	}
 }
 
 void putc(char c) {

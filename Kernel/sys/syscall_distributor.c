@@ -5,6 +5,7 @@
 #include "include/sound.h"
 #include "../util/include/util.h"
 #include "include/clock.h"
+#include "../arch/include/arch.h"
 
 static int on_ack_syscall(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
 
@@ -13,8 +14,19 @@ static int syscall_write(ddword fd, ddword buf, ddword size);
 static int syscall_get_time(ddword time_ptr, ddword arg2, ddword arg3);
 static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3);
 static int syscall_beep(ddword length, ddword freq, ddword arg3);
+static int syscall_shutdown(ddword arg1, ddword arg2, ddword arg3);
 
-int (*syscalls[BEEP-READ])(ddword, ddword, ddword);
+int (*syscalls[SHUTDOWN-READ+1])(ddword, ddword, ddword);
+
+static int syscall_shutdown(ddword arg1, ddword arg2, ddword arg3) {
+
+	_cli();
+	clc();
+	putsxy("Puede Apagar su Equipo", 29, 10);
+	_halt();
+
+	return 0;
+}
 
 static int syscall_get_time(ddword time_ptr, ddword arg2, ddword arg3) {
 	date_t *time = (date_t*)time_ptr;
@@ -162,6 +174,7 @@ void init_syscalls() {
 	syscalls[GET_TIME] = &syscall_get_time;
 	syscalls[SET_TIME] = &syscall_set_time;
 	syscalls[BEEP] = &syscall_beep;
+	syscalls[SHUTDOWN] = &syscall_shutdown;
 
 	syscall_listener.call = &on_ack_syscall;
 

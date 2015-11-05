@@ -9,7 +9,8 @@ typedef enum {
 	CLEAR_SCREEN,
 	GET_TIME,
 	SET_TIME,
-	BEEP
+	BEEP,
+	SHUTDOWN
 } syscall_id;
 
 typedef enum {

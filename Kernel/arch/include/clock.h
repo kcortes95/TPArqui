@@ -21,7 +21,7 @@ typedef enum {
 	REGC						= 0x0C,
 	REGD						= 0x0D,
 	DIAGNOSTICS			= 0x0E,
-	SHUTDOWN				= 0x0F
+	CLK_SHUTDOWN		= 0x0F
 } clock_attr;
 
 #endif

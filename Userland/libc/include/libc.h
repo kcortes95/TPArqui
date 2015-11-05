@@ -19,27 +19,22 @@ typedef enum {
 	CLEAR_SCREEN,
 	GET_TIME,
 	SET_TIME,
-	BEEP
+	BEEP,
+	SHUTDOWN
 } syscall_id;
 
 /* syscalls */
 
-extern int syscaller(int, int, int, int);
+extern int _syscaller(int, int, int, int);
 
-// extern void gettime(rtc_time *);
-// extern void settime(rtc_time *);
 int get_time(date_t *);
 int set_time(date_t *);
-// extern int write(unsigned int fd, char * str, unsigned int size);
 int write(int fd, char * str, int size);
-extern void pause(void);
-// extern int read(unsigned int fd, char * str, uint32_t size);
 int read(int fd, char * str, int size);
-extern void halt(void);
-extern void shutdown(void);
-// extern void beep(void);
 int beepwo(uint32_t, uint32_t, uint8_t);
 int beep();
+int shutdown(void);
+
 extern int ioctl(unsigned int fd, unsigned long request, void * params);
 
 #define IOCTL_MOVE 0
