@@ -1,8 +1,8 @@
 #ifndef __PLAY_NOTE__
 #define __PLAY_NOTE__
 
-//void playNote(int frequency); //a futuro hay que hacer esto!! 
-void playNote(void);
+void playNote(int frequency); //a futuro hay que hacer esto!! 
+//void playNote(void);
 
 /*
 * DO - C - 9121

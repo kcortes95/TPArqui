@@ -125,7 +125,14 @@ int main() {
 	init_timer();
 	init_syscalls();
 	init_keyboard();
-	beeplf(2,9121); //de lo de goffan
+
+//	play_intro();
+//	beeplf(2,9121); //de lo de goffan
+//	playNote(9121);
+	while(1){
+	println("Hola");
+	playNote(9121);
+	}
 	
 	clc();
 
