@@ -3,7 +3,7 @@
 #include <command.h>
 
 #define SHELL_BUFFER_SIZE 128
-#define SHELL_TEXT "Shell> "
+#define SHELL_TEXT "$> "
 
 typedef struct cmd_entry {
 	char* name;

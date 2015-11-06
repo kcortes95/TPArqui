@@ -5,14 +5,12 @@
 #include <naiveConsole.h>
 
 #include "arch/include/arch.h"
-
 #include "sys/include/video.h"
-
 #include "sys/include/timer.h"
-
 #include "sys/include/keyboard.h"
-
 #include "sys/include/syscalls.h"
+#include "sys/include/sound.h"
+#include "sys/include/playNote.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -125,19 +123,11 @@ int main() {
 	init_idt();
 	init_interrupts();
 	init_timer();
-
 	init_syscalls();
-
-// recien ahora activamos el teclado
 	init_keyboard();
-
-	// play_intro();
+	beeplf(2,9121); //de lo de goffan
 	
 	clc();
-
-	
-
-	
 
 	// Con esto ejecutamos Userland
 	((EntryPoint)sampleCodeModuleAddress)();
