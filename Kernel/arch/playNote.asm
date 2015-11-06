@@ -1,5 +1,9 @@
 ; esto que vemos aca es el original que encontre en la universidad de Illinois
 
+GLOBAL playNote
+section .text
+
+playNote:
         mov     al, 182         ; Prepare the speaker for the note.
         out     43h, al         
         ;mov    rax,0           ; Kevin - seteo en 0 porque tengo ganas

@@ -1,7 +1,6 @@
 #include "include/keyboard.h"
 #include "../arch/include/arch.h"
-
-#include "include/video.h";
+#include "include/video.h"
 
 static int on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3);
 

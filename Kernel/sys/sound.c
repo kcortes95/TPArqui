@@ -1,4 +1,4 @@
-#include "include/sound.h";
+#include "include/sound.h"
 
 static unsigned int timeout = 0;
 
@@ -8,13 +8,12 @@ void sound(uint32_t frequency) {
 	if ((frequency<19) || (frequency>22000)) return;
 
 	_outport(0x61, _inport(0x61) | 3);
-	_outport(0x43, 0xB6);
+	_outport(0x43, 0xB6); 							//Prepare the speaker for the note.
 	_outport(0x42, (1193182L / frequency) & 0xFF);
 	_outport(0x42, (1193182L / frequency) >> 8);
 }
 
 void nosound(void) {
-
 	_outport(0x61, _inport(0x61) & 0xFC);
 }
 
