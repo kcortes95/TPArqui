@@ -6,10 +6,11 @@
 typedef enum {
 	READ = 0,
 	WRITE,
-	CLEAR_SCREEN,
+	OPTS,
 	GET_TIME,
 	SET_TIME,
 	BEEP,
+	PLAY_SOUND,
 	SHUTDOWN
 } syscall_id;
 

@@ -25,6 +25,7 @@ typedef struct {
 uint8_t clock_get(clock_attr attr);
 uint8_t clock_get_seconds();
 uint8_t clock_get_minutes();
+uint8_t clock_get_hours();
 uint8_t clock_get_weekday();
 uint8_t clock_get_day_of_month();
 uint8_t clock_get_month();
@@ -33,6 +34,7 @@ uint8_t clock_get_year();
 void clock_set(clock_attr attr, uint8_t value);
 void clock_set_seconds(uint8_t);
 void clock_set_minutes(uint8_t);
+void clock_set_hours(uint8_t);
 void clock_set_weekday(uint8_t);
 void clock_set_day_of_month(uint8_t);
 void clock_set_month(uint8_t);

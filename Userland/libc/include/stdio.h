@@ -4,7 +4,7 @@
 #define STDIN 	0
 #define STDOUT 	1
 #define STDERR 	2
-#define STDRAW 	3
+#define STDFILE	3
 #define SCANF_MAX_STR_BUFFER 64
 #include <stdarg.h>
 

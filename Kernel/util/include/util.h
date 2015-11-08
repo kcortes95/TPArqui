@@ -8,7 +8,7 @@ string itoa2(int64_t i);
 string itoa10(int64_t);
 string itoa16(int64_t i);
 int intlen(int64_t n);
-int strlen(string s);
+int strlen(char* s);
 
 uint8_t to_bcd8(uint8_t);
 uint16_t to_bcd16(uint16_t);

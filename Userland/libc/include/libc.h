@@ -16,10 +16,11 @@ typedef struct {
 typedef enum {
 	READ = 0,
 	WRITE,
-	CLEAR_SCREEN,
+	OPTS,
 	GET_TIME,
 	SET_TIME,
 	BEEP,
+	PLAY_SOUND,
 	SHUTDOWN
 } syscall_id;
 
@@ -31,40 +32,32 @@ int get_time(date_t *);
 int set_time(date_t *);
 int write(int fd, char * str, int size);
 int read(int fd, char * str, int size);
-int beepwo(uint32_t, uint32_t, uint8_t);
-int beep();
+int beepwo(uint32_t, uint32_t);
+int make_beep();
 int shutdown(void);
+int set_opts(uint32_t request, uint16_t options);
 
-extern int ioctl(unsigned int fd, unsigned long request, void * params);
+#define REQUEST_CLEAR_SCREEN 0
+#define REQUEST_SET_COLOR 1
+#define REQUEST_RESET 2
 
-#define IOCTL_MOVE 0
-#define IOCTL_CLR 1
-#define IOCTL_SET_COLOR 2
-#define IOCTL_INACTIVE 3
-#define _IOCTL_HIGH_LOW(high, low)	((uint64_t)(((high) & 0xFF) << 8) | (uint64_t)((low) & 0xFF))
+#define COLOR_BLACK					(char)0
+#define COLOR_BLUE					(char)1
+#define COLOR_GREEN					(char)2
+#define COLOR_CYAN					(char)3
+#define COLOR_RED						(char)4
+#define COLOR_MAGENTA				(char)5
+#define COLOR_BROWN					(char)6
+#define COLOR_LIGHT_GREY		(char)7
+#define COLOR_DARK_GREY			(char)8
+#define COLOR_LIGHT_BLUE		(char)9
+#define COLOR_LIGHT_GREEN		(char)10
+#define COLOR_LIGHT_CYAN		(char)11
+#define COLOR_LIGHT_RED			(char)12
+#define COLOR_LIGHT_MAGENTA	(char)13
+#define COLOR_LIGHT_YELLOW	(char)14
+#define COLOR_WHITE					(char)15
 
-#define IOCTL_CURSOR(row, pos)	((void *) _IOCTL_HIGH_LOW((row), (pos)))
-#define IOCTL_COLOR(fore, back)	((void *) _IOCTL_HIGH_LOW((fore), (back)))
-
-
-enum IOCTL_COLOR_CODE {
-	IOCTL_COLOR_BLACK = 0,
-	IOCTL_COLOR_BLUE,
-	IOCTL_COLOR_GREEN,
-	IOCTL_COLOR_CYAN,
-	IOCTL_COLOR_RED,
-	IOCTL_COLOR_MAGENTA,
-	IOCTL_COLOR_BROWN,
-	IOCTL_COLOR_LIGHT_GRAY,
-
-	IOCTL_COLOR_GRAY = 8,
-	IOCTL_COLOR_LIGHT_BLUE,
-	IOCTL_COLOR_LIGHT_GREEN,
-	IOCTL_COLOR_LIGHT_CYAN,
-	IOCTL_COLOR_LIGHT_RED,
-	IOCTL_COLOR_LIGHT_MAGENTA,
-	IOCTL_COLOR_YELLOW,
-	IOCTL_COLOR_WHITE,
-};
+#define build_colour(fg, bg) ( (bg << 4) | (fg & 0x0f) )
 
 #endif

@@ -4,5 +4,6 @@
 #include "interrupts_handler.h"
 #include "ports.h"
 #include "idt.h"
+#include "cpu.h"
 
 #endif

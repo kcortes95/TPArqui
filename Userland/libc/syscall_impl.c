@@ -8,12 +8,12 @@ int read(int fd, char * str, int size) {
 	return _syscaller((int)READ, fd, (uintptr_t)str, size);
 }
 
-int beep() {
-	return beepwo((uint32_t)1000, (uint32_t)440, (uint8_t)5);
+int make_beep() {
+	return _syscaller((int)BEEP, 0, 0, 0);
 }
 
-int beepwo(uint32_t length, uint32_t freq, uint8_t octave) {
-	return _syscaller((int)BEEP, length, freq, octave);
+int beepwo(uint32_t length, uint32_t freq) {
+	return _syscaller((int)PLAY_SOUND, length, freq, 0);
 }
 
 int get_time(date_t *date) {
@@ -28,3 +28,6 @@ int shutdown(void) {
 	return _syscaller((int)SHUTDOWN, 0, 0, 0);
 }
 
+int set_opts(uint32_t request, uint16_t options) {
+	return _syscaller((int)OPTS, request, options, 0);
+}

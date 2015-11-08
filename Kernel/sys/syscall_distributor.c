@@ -15,8 +15,28 @@ static int syscall_get_time(ddword time_ptr, ddword arg2, ddword arg3);
 static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3);
 static int syscall_beep(ddword length, ddword freq, ddword arg3);
 static int syscall_shutdown(ddword arg1, ddword arg2, ddword arg3);
+static int syscall_set_opts(ddword arg1, ddword arg2, ddword arg3);
 
 int (*syscalls[SHUTDOWN-READ+1])(ddword, ddword, ddword);
+static char* song_repository_addr = (char*)0x500000;
+static uint32_t song_read_offset = 0;
+
+static int syscall_set_opts(ddword request, ddword params, ddword arg3) {
+
+	if (request == REQUEST_CLEAR_SCREEN) {
+
+		clc();
+
+	} else if (request == REQUEST_SET_COLOR) {
+
+		set_colour_raw(params);
+	} else if (request == REQUEST_RESET) {
+		set_colour(COLOR_BLACK, COLOR_LIGHT_GREY);
+	}
+
+
+	return 0;
+}
 
 static int syscall_shutdown(ddword arg1, ddword arg2, ddword arg3) {
 
@@ -110,15 +130,25 @@ static int syscall_read(ddword fd, ddword buf, ddword size) {
 	char *buffer;
 	buffer = (char*)buf;
 
-	do {
+	if (fd == STDIN) {
 
-		if (!is_buffer_empty()) {
-			c = get_key();
-			buffer[i++] = c;
-		} 
-	} while (i < size);
+		do {
 
-	return size;
+			if (!is_buffer_empty()) {
+				c = get_key();
+				buffer[i++] = c;
+			} 
+		} while (i < size);
+
+		return size;
+	} else if (fd == STDFILE) {
+
+		do {
+			buffer[i++] = *( song_repository_addr + song_read_offset );
+			song_read_offset++;
+		} while ( i < size && *(song_repository_addr+song_read_offset) != 0);
+		return size;
+	}
 
 }
 
@@ -144,8 +174,15 @@ static int syscall_write(ddword fd, ddword buf, ddword size) {
 
 }
 
-static int syscall_beep(ddword length, ddword freq, ddword arg3) {
+static int syscall_beep(ddword arg1, ddword arg2, ddword arg3) {
 	beep();
+
+	return 0;
+}
+
+static int syscall_play_sound(ddword length, ddword freq, ddword arg3) {
+	
+	beeplf(length, freq);
 
 	return 0;
 }
@@ -171,9 +208,11 @@ void init_syscalls() {
 
 	syscalls[READ] = &syscall_read;
 	syscalls[WRITE] = &syscall_write;
+	syscalls[OPTS] = &syscall_set_opts;
 	syscalls[GET_TIME] = &syscall_get_time;
 	syscalls[SET_TIME] = &syscall_set_time;
 	syscalls[BEEP] = &syscall_beep;
+	syscalls[PLAY_SOUND] = &syscall_play_sound;
 	syscalls[SHUTDOWN] = &syscall_shutdown;
 
 	syscall_listener.call = &on_ack_syscall;

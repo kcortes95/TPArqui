@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include <libc.h>
 
+static void parse_sounds(char* raw, song_t* parsed_songs);
+static void parse_sound(char *raw, song_t* parse_song);
+static void parse_title(char *raw, song_t* parse_song);
+static void parse_header(char *raw, song_t* parse_song);
+static void parse_body(char *raw, song_t* parse_song);
+
 /*****Commands functions*****/
 
 
@@ -31,8 +37,7 @@ void echo(char** args, int argc) {
 }
 
 void clear(char** args, int argc) {
-	// ioctl(STDOUT, IOCTL_CLR,    (void *) 0);
-	// ioctl(STDOUT, IOCTL_MOVE,   (void *) 0);
+	set_opts(REQUEST_CLEAR_SCREEN, 0);
 }
 
 void commands(char** args, int argc) {
@@ -159,8 +164,56 @@ void setcolor(char** args, int argc) {
 		return;
 	}
 
-	// ioctl(STDOUT, IOCTL_SET_COLOR, IOCTL_COLOR(fore, back));
+	set_opts(REQUEST_SET_COLOR, build_colour(fore, back));
 	clear(args, argc);
+}
+
+void beep(char *argv[], int argc) {
+	make_beep();
+}
+
+// https://en.wikipedia.org/wiki/Scientific_pitch_notation
+// static float base_frequencies[] = {
+// 	16.352, // C
+// 	17.324, // C#
+// 	18.354, // D
+// 	19.445, // D#
+// 	20.602, // E
+// 	21.827, // F
+// 	23.125, // F#
+// 	24.500, // G
+// 	25.957, // G#
+// 	27.500, // A
+// 	29.135, // A#
+// 	30.868, // B 
+// 	0,			// Pause
+// };
+
+void play_sound(char *argv[], int argc) {
+
+	char songs[2048];
+	song_t parsed_songs[20];
+
+	printf("Welcome to Sound Player 1.0\n");
+	printf("Fetching sounds...\n");
+	fgets(STDFILE, songs, 2048);
+	printf("%s\n", songs);
+	printf("Parsing Sounds...\n");
+	parse_sounds(songs, parsed_songs);
+
+	for (int i = 0; i < 2; i++) {
+		printf("%s\n", parsed_songs[i].title);
+	}
+
+
+	// int note_duration;
+	// int note_pitch;
+	// int note_octave;
+
+	// int millis = 
+	// int frequency = base_frequencies[note_pitch]*(note_octave+1);
+
+	beepwo(500, 440);
 }
 
 /*==========================================
@@ -168,9 +221,152 @@ void setcolor(char** args, int argc) {
 ===========================================*/
 
 
+static void parse_sounds(char* raw, song_t* parsed_songs) {
 
+	uint8_t current_song = 0;
+	char *start_song = raw;
 
+	while (*raw != 0) {
 
+		printf("%c", *raw);
+
+		if (*raw == ';') {
+			printf("Entering Song: %d\n", current_song);
+			*raw = 0;
+			parse_sound(start_song, &parsed_songs[current_song]);
+			start_song = raw+1;
+			current_song++;
+		}
+
+		raw++;
+	}
+}
+
+static void parse_sound(char *raw, song_t* parse_song) {
+
+	uint8_t part = 0;
+	char *start = raw;
+
+	while (*raw != 0) {
+
+		if (*raw == ':') {
+			*raw = 0;
+			if (part == 0) {
+				parse_title(start, parse_song);
+			} else if (part == 1) {
+				parse_header(start, parse_song);
+			} else {
+				parse_body(start, parse_song);
+			}
+			start = raw+1;
+			part++;
+		}
+
+		raw++;
+	}
+}
+
+static void parse_title(char *raw, song_t* parse_song) {
+	// char title[30];
+	uint8_t i = 0;
+
+	printf("Parsing title: ");
+
+	while (*raw != 0) {
+
+		printf("%c", *raw);
+
+		parse_song->title[i++] = *raw;
+
+		raw++;
+	}
+
+	printf("\n");
+
+	// parse_song->title = title;
+}
+
+static void parse_header(char *raw, song_t* parse_song) {
+
+	parse_song->default_duration = (uint8_t)(*(raw+2) - '0');
+	parse_song->default_octave = (uint8_t)(*(raw+6) - '0');
+	parse_song->beat = (uint16_t)(*(raw+10) - '0')*100+(uint16_t)(*(raw+11) - '0')*10+(uint16_t)(*(raw+12) - '0');
+}
+
+static void parse_body(char *raw, song_t* parse_song) {
+
+	NoteParserState state = kReadingInitial;
+	uint8_t i = 0;
+
+	while (*raw != 0) {
+
+		switch (state) {
+			case kReadingInitial:
+				parse_song->notes[i].duration = (uint8_t)-1;
+				parse_song->notes[i].octave = (uint8_t)-1;
+				if ('1' <= *raw && *raw <= '9') {
+					state = kReadingDuration;
+
+					parse_song->notes[i].duration = (uint8_t)(*raw - '0');
+
+				}
+				break;
+			case kReadingDuration:
+				if ('1' <= *raw && *raw <= '9') {
+
+					parse_song->notes[i].duration = parse_song->notes[i].duration*10+(uint8_t)(*raw - '0');
+				} else {
+					state = kReadingPitch;
+					switch (*raw) {
+						case 'a':
+							parse_song->notes[i].pitch = NOTE_A;
+							break;
+						case 'b':
+							parse_song->notes[i].pitch = NOTE_B;
+							break;
+						case 'c':
+							parse_song->notes[i].pitch = NOTE_C;
+							break;
+						case 'd':
+							parse_song->notes[i].pitch = NOTE_D;
+							break;
+						case 'e':
+							parse_song->notes[i].pitch = NOTE_E;
+							break;
+						case 'f':
+							parse_song->notes[i].pitch = NOTE_F;
+							break;
+						case 'g':
+							parse_song->notes[i].pitch = NOTE_G;
+							break;
+						case 'p':
+							parse_song->notes[i].pitch = NOTE_P;
+							break;
+					}
+				}
+				break;
+			case kReadingPitch:
+				if (*raw == '#') {
+					parse_song->notes[i].pitch += 1;
+				} else {
+					if (*raw == '.') {
+						parse_song->notes[i].duration *= 2;
+					} else if ('0' <= *raw && *raw <= '9'){
+						parse_song->notes[i].octave = (uint8_t)(*raw - '0');
+					}
+					state = kReadingOctave;
+				}
+				break;
+			case kReadingOctave:
+				state = kReadingInitial;
+				i++;
+				break;
+		}
+
+		raw++;
+	}
+
+}
 
 //Receives input string, parses it for a date, returns 1 if valid, 0 if not
 int parse_date(char* date_string, int* days, int* months, int* years) {

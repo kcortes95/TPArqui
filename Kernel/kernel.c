@@ -11,6 +11,7 @@
 #include "sys/include/syscalls.h"
 #include "sys/include/sound.h"
 #include "sys/include/playNote.h"
+// #include "util/include/util.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -129,10 +130,10 @@ int main() {
 //	play_intro();
 //	beeplf(2,9121); //de lo de goffan
 //	playNote(9121);
-	while(1){
-	println("Hola");
-	playNote(9121);
-	}
+	// while(1){
+	// println("Hola");
+	// playNote(9121);
+	// }
 	
 	clc();
 

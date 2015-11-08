@@ -8,8 +8,7 @@ static int read_str(int fd, char * str);
 static int read_base_10(int fd, int * n);
 
 
-int scanf(char * fmt, ...)
-{
+int scanf(char * fmt, ...) {
 	va_list ap;
 	int read;
 	
@@ -19,8 +18,7 @@ int scanf(char * fmt, ...)
 	return read;
 }
 
-int fscanf(int fd, char * fmt, ...)
-{
+int fscanf(int fd, char * fmt, ...) {
 	va_list ap;
 	int read;
 	
@@ -31,8 +29,7 @@ int fscanf(int fd, char * fmt, ...)
 }
 
 
-int vfscanf(int fd, char * fmt, va_list ap)
-{
+int vfscanf(int fd, char * fmt, va_list ap) {
 	int c;
 	char * ptr = fmt;
 	int in_fmt = 0;
@@ -58,8 +55,7 @@ int vfscanf(int fd, char * fmt, va_list ap)
 	return read;
 }
 
-static unsigned int read_fmt(int fd, int c, va_list ap)
-{
+static unsigned int read_fmt(int fd, int c, va_list ap) {
 	int read = 0;
 	char * ptr;
 
@@ -86,8 +82,7 @@ static unsigned int read_fmt(int fd, int c, va_list ap)
 	return read;
 }
 
-static int read_str(int fd, char * str)
-{
+static int read_str(int fd, char * str) {
 	char c;
 	int idx = 0;
 	while (idx < SCANF_MAX_STR_BUFFER - 1) {
@@ -102,8 +97,7 @@ static int read_str(int fd, char * str)
 	return idx > 0;
 }
 
-static int read_base_10(int fd, int * n)
-{
+static int read_base_10(int fd, int * n) {
 	char c;
 	int idx = 0;
 	uint64_t asd = 0;
@@ -124,8 +118,7 @@ static int read_base_10(int fd, int * n)
 
 
 
-int atoi(char * str)
-{
+int atoi(char * str) {
 	char c;
 	int i = 0;
 	while ((c = *str++) != 0) {

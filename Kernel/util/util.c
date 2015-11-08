@@ -37,7 +37,7 @@ int intlen(int64_t n) {
 	return l;
 }
 
-int strlen(char *s) {
+int strlen(char* s) {
 	int l = 0;
 	while (*s != 0) {
 		l++;

@@ -50,6 +50,10 @@ void set_colour(uint8_t bg, uint8_t fg) {
 	current_colour = (bg << 4) | (fg & 0x0f);
 }
 
+void set_colour_raw(uint8_t colour) {
+	current_colour = colour;
+}
+
 uint8_t get_fg_colour() {
 	return current_colour & 0x0f;
 }
