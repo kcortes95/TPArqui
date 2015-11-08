@@ -233,7 +233,7 @@ void play_sound(char *argv[], int argc) {
 
 		current_note = parsed_songs[choice-1].notes[i];
 
-		printf("d:%d p:%d o:%d**", current_note.duration, current_note.pitch, current_note.octave);
+		// printf("d:%d p:%d o:%d**", current_note.duration, current_note.pitch, current_note.octave);
 		beepwo( one_note_length / current_note.duration,
 			base_frequencies[current_note.pitch] * (current_note.octave + 1) );
 	}
