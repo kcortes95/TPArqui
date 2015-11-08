@@ -42,6 +42,7 @@ typedef struct {
 	uint8_t default_octave;
 	uint16_t beat;
 	note_t notes[100];
+	uint8_t read_notes;
 } song_t;
 
 void echo(char**, int);

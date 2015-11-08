@@ -144,9 +144,8 @@ static int syscall_read(ddword fd, ddword buf, ddword size) {
 	} else if (fd == STDFILE) {
 
 		do {
-			buffer[i++] = *( song_repository_addr + song_read_offset );
-			song_read_offset++;
-		} while ( i < size && *(song_repository_addr+song_read_offset) != 0);
+			buffer[i++] = *( song_repository_addr + song_read_offset++ );
+		} while ( i < size && *( song_repository_addr + song_read_offset ) != 0);
 		return size;
 	}
 

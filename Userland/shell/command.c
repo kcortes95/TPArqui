@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <libc.h>
 
-static void parse_sounds(char* raw, song_t* parsed_songs);
+static int parse_sounds(char* raw, song_t* parsed_songs);
 static void parse_sound(char *raw, song_t* parse_song);
 static void parse_title(char *raw, song_t* parse_song);
 static void parse_header(char *raw, song_t* parse_song);
@@ -173,47 +173,70 @@ void beep(char *argv[], int argc) {
 }
 
 // https://en.wikipedia.org/wiki/Scientific_pitch_notation
-// static float base_frequencies[] = {
-// 	16.352, // C
-// 	17.324, // C#
-// 	18.354, // D
-// 	19.445, // D#
-// 	20.602, // E
-// 	21.827, // F
-// 	23.125, // F#
-// 	24.500, // G
-// 	25.957, // G#
-// 	27.500, // A
-// 	29.135, // A#
-// 	30.868, // B 
-// 	0,			// Pause
-// };
+static float base_frequencies[] = {
+	16.352, // C   0
+	17.324, // C#  1
+	18.354, // D   2
+	19.445, // D#  3
+	20.602, // E   4
+	21.827, // F   5
+	23.125, // F#  6
+	24.500, // G   7
+	25.957, // G#  8
+	27.500, // A   9
+	29.135, // A#  10
+	30.868, // B   11
+	0,			// Pause  12
+};
 
 void play_sound(char *argv[], int argc) {
 
 	char songs[2048];
 	song_t parsed_songs[20];
+	int song_number = 0;
+	int choice = -1;
+	int i = 0;
+	note_t current_note;
+	uint32_t one_note_length;
 
 	printf("Welcome to Sound Player 1.0\n");
 	printf("Fetching sounds...\n");
 	fgets(STDFILE, songs, 2048);
-	printf("%s\n", songs);
-	printf("Parsing Sounds...\n");
-	parse_sounds(songs, parsed_songs);
 
-	for (int i = 0; i < 2; i++) {
-		printf("%s\n", parsed_songs[i].title);
+	printf("Parsing Sounds...\n");
+	song_number = parse_sounds(songs, parsed_songs);
+
+	printf("Available Tunes are: \n");
+	for (int i = 0; i < song_number; i++) {
+		printf("%d. %s\n", i+1, parsed_songs[i].title);
 	}
 
+	while (choice < 0) {
 
-	// int note_duration;
-	// int note_pitch;
-	// int note_octave;
+		printf("Insert a number from the list: ");
+		scanf("%d", &choice);
+		if (choice > song_number)
+			choice = -1;
+	}
 
-	// int millis = 
-	// int frequency = base_frequencies[note_pitch]*(note_octave+1);
+	printf("Default Duration: %d\n", parsed_songs[choice-1].default_duration);
+	printf("Default Octave: %d\n", parsed_songs[choice-1].default_octave);
+	printf("Beat: %d\n", parsed_songs[choice-1].beat);
 
-	beepwo(500, 440);
+	printf("Read Notes: %d\n", parsed_songs[choice-1].read_notes);
+
+	one_note_length = 60000 / parsed_songs[choice-1].beat * 4;
+
+	printf("o:%d ", one_note_length);
+
+	for (; i < parsed_songs[choice-1].read_notes; i++) {
+
+		current_note = parsed_songs[choice-1].notes[i];
+
+		printf("d:%d p:%d o:%d**", current_note.duration, current_note.pitch, current_note.octave);
+		beepwo( one_note_length / current_note.duration,
+			base_frequencies[current_note.pitch] * (current_note.octave + 1) );
+	}
 }
 
 /*==========================================
@@ -221,17 +244,14 @@ void play_sound(char *argv[], int argc) {
 ===========================================*/
 
 
-static void parse_sounds(char* raw, song_t* parsed_songs) {
+static int parse_sounds(char* raw, song_t* parsed_songs) {
 
 	uint8_t current_song = 0;
 	char *start_song = raw;
 
 	while (*raw != 0) {
 
-		printf("%c", *raw);
-
 		if (*raw == ';') {
-			printf("Entering Song: %d\n", current_song);
 			*raw = 0;
 			parse_sound(start_song, &parsed_songs[current_song]);
 			start_song = raw+1;
@@ -240,6 +260,8 @@ static void parse_sounds(char* raw, song_t* parsed_songs) {
 
 		raw++;
 	}
+
+	return current_song;
 }
 
 static void parse_sound(char *raw, song_t* parse_song) {
@@ -255,8 +277,6 @@ static void parse_sound(char *raw, song_t* parse_song) {
 				parse_title(start, parse_song);
 			} else if (part == 1) {
 				parse_header(start, parse_song);
-			} else {
-				parse_body(start, parse_song);
 			}
 			start = raw+1;
 			part++;
@@ -264,26 +284,20 @@ static void parse_sound(char *raw, song_t* parse_song) {
 
 		raw++;
 	}
+
+	parse_body(start, parse_song);
 }
 
 static void parse_title(char *raw, song_t* parse_song) {
 	// char title[30];
 	uint8_t i = 0;
 
-	printf("Parsing title: ");
-
 	while (*raw != 0) {
-
-		printf("%c", *raw);
 
 		parse_song->title[i++] = *raw;
 
 		raw++;
 	}
-
-	printf("\n");
-
-	// parse_song->title = title;
 }
 
 static void parse_header(char *raw, song_t* parse_song) {
@@ -298,7 +312,7 @@ static void parse_body(char *raw, song_t* parse_song) {
 	NoteParserState state = kReadingInitial;
 	uint8_t i = 0;
 
-	while (*raw != 0) {
+	do {
 
 		switch (state) {
 			case kReadingInitial:
@@ -308,6 +322,39 @@ static void parse_body(char *raw, song_t* parse_song) {
 					state = kReadingDuration;
 
 					parse_song->notes[i].duration = (uint8_t)(*raw - '0');
+
+				} else if ('a' <= *raw && *raw <= 'g') {
+
+					state = kReadingPitch;
+
+					parse_song->notes[i].duration = parse_song->default_duration;
+
+					switch (*raw) {
+						case 'a':
+							parse_song->notes[i].pitch = NOTE_A;
+							break;
+						case 'b':
+							parse_song->notes[i].pitch = NOTE_B;
+							break;
+						case 'c':
+							parse_song->notes[i].pitch = NOTE_C;
+							break;
+						case 'd':
+							parse_song->notes[i].pitch = NOTE_D;
+							break;
+						case 'e':
+							parse_song->notes[i].pitch = NOTE_E;
+							break;
+						case 'f':
+							parse_song->notes[i].pitch = NOTE_F;
+							break;
+						case 'g':
+							parse_song->notes[i].pitch = NOTE_G;
+							break;
+						case 'p':
+							parse_song->notes[i].pitch = NOTE_P;
+							break;
+					}
 
 				}
 				break;
@@ -348,23 +395,31 @@ static void parse_body(char *raw, song_t* parse_song) {
 			case kReadingPitch:
 				if (*raw == '#') {
 					parse_song->notes[i].pitch += 1;
-				} else {
-					if (*raw == '.') {
-						parse_song->notes[i].duration *= 2;
-					} else if ('0' <= *raw && *raw <= '9'){
-						parse_song->notes[i].octave = (uint8_t)(*raw - '0');
-					}
-					state = kReadingOctave;
+				} else if (*raw == '.') {
+					parse_song->notes[i].duration *= 2;
+				} else if ('0' <= *raw && *raw <= '9'){
+					parse_song->notes[i].octave = (uint8_t)(*raw - '0');
+				} else if (*raw == ',') {
+					parse_song->notes[i].octave = parse_song->default_octave;
 				}
+				state = kReadingOctave;
 				break;
 			case kReadingOctave:
 				state = kReadingInitial;
+				if ( parse_song->notes[i].duration == (uint8_t)-1) {
+					parse_song->notes[i].duration = parse_song->default_duration;
+				}
+				if ( parse_song->notes[i].octave == (uint8_t)-1) {
+					parse_song->notes[i].octave = parse_song->default_octave;
+				}
 				i++;
 				break;
 		}
 
 		raw++;
-	}
+	} while (*raw != 0);
+
+	parse_song->read_notes = i;
 
 }
 

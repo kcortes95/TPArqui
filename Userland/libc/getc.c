@@ -47,7 +47,7 @@ int fgetsn(int fd, char * c, int n) {
 
 int fgets(int fd, char * c, unsigned int n) {
 	char buffer;
-	char idx = 0;
+	unsigned int idx = 0;
 	while (idx < n && (buffer = fgetc(fd)) != '\n') {
 		*c++ = buffer;
 		idx++;

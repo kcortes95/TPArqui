@@ -2,6 +2,8 @@
 #include "include/timer.h"
 #include "include/video.h"
 
+#define SOUND_DEBUG 0
+
 //! output sound to speaker
 void play(uint32_t frequency) {
 
@@ -25,17 +27,21 @@ void beep(void) {
 
 void beeplf(unsigned int length, unsigned int freq) {
 	
-	println("\nbeep registered:");
-	prints("freq: ");
-	puti(freq);
-	prints(" duration: ");
-	puti(length);
-	println("ms");
+	if (SOUND_DEBUG) {
+		println("\nbeep registered:");
+		prints("freq: ");
+		puti(freq);
+		prints(" duration: ");
+		puti(length);
+		println("ms");
 
-	prints("playing...");
-	play(freq);
+		prints("playing...");
+	}
+	if (freq != 0)
+		play(freq);
 	wait(length);
 	pause();
-	println("stopping");
+	if (SOUND_DEBUG )
+		println("stopping");
 
 }
