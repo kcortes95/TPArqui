@@ -22,7 +22,7 @@ void pause() {
 }
 
 void beep(void) {
-	beeplf(500, 0x533);
+	beeplf(100, 200);
 }
 
 void beeplf(unsigned int length, unsigned int freq) {

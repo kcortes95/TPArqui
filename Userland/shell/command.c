@@ -235,7 +235,7 @@ void play_sound(char *argv[], int argc) {
 
 		// printf("d:%d p:%d o:%d**", current_note.duration, current_note.pitch, current_note.octave);
 		beepwo( one_note_length / current_note.duration,
-			base_frequencies[current_note.pitch] * (current_note.octave + 1) );
+			base_frequencies[current_note.pitch] * (1 << current_note.octave) );
 	}
 }
 
