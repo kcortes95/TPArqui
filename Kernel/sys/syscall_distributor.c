@@ -148,15 +148,16 @@ static int syscall_read(ddword fd, ddword buf, ddword size) {
 			} 
 		} while (i < size);
 
-		return size;
+		return i;
 	} else if (fd == STDFILE) {
 
 		do {
 			buffer[i++] = *( song_repository_addr + song_read_offset++ );
 		} while ( i < size && *( song_repository_addr + song_read_offset ) != 0);
-		return size;
+		return i;
 	}
 
+	return 0;
 }
 
 static int syscall_write(ddword fd, ddword buf, ddword size) {

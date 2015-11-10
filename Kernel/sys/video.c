@@ -108,7 +108,7 @@ void putc(char c) {
 }
 
 void putnum(int64_t i, uint8_t base) {
-	char *buf, *res;
+	char *buf = "", *res;
 
 	res = itoa(i, buf, base);
 

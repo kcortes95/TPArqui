@@ -1,7 +1,7 @@
 #include "include/keyboard.h"
 #include "../arch/include/arch.h"
 
-#include "include/video.h";
+#include "include/video.h"
 
 static int on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3);
 
@@ -91,14 +91,7 @@ void key_received(unsigned char keycode) {
 
 }
 
-/**
- * Listener de interrupcion de teclado
- * @param id   Lo esucho al pedo
- * @param arg1 Lo esucho al pedo
- * @param arg2 Lo esucho al pedo
- * @param arg3 Lo esucho al pedo
- */
-static int on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3) {
+static int on_ack_keyboard(syscall_id id, ddword arg1, ddword arg2, ddword arg3) {
 
 	unsigned char status = _inport(KEYBOARD_STATUS_PORT);
 	unsigned char keycode = _inport(KEYBOARD_DATA_PORT);
