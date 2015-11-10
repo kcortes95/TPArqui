@@ -38,7 +38,6 @@ typedef struct {
 void init_keyboard();
 void key_received(unsigned char keycode);
 void insert_key(unsigned char ascii_value);
-void kKBRemoveLastKey();
 unsigned char get_key();
 bool is_alpha(unsigned char keycode);
 bool is_buffer_empty();
