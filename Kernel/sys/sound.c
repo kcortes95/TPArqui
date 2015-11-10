@@ -2,7 +2,7 @@
 #include "include/timer.h"
 #include "include/video.h"
 
-#define SOUND_DEBUG 1
+static const int SOUND_DEBUG = 0;
 
 //! output sound to speaker
 void play(uint32_t frequency) {
