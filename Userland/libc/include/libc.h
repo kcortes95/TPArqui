@@ -35,7 +35,7 @@ int read(int fd, char * str, int size);
 int beepwo(uint32_t, uint32_t);
 int make_beep();
 int shutdown(void);
-int set_opts(uint32_t request, uint16_t options);
+int set_opts(uint8_t fd, uint32_t request, uint16_t options);
 
 #define REQUEST_CLEAR_SCREEN 0
 #define REQUEST_SET_COLOR 1

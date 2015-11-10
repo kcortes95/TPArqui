@@ -37,8 +37,9 @@ void beeplf(unsigned int length, unsigned int freq) {
 
 		prints("playing...");
 	}
-	if (freq != 0)
+	if (freq != 0) {
 		play(freq);
+	}
 	wait(length);
 	pause();
 	if (SOUND_DEBUG )

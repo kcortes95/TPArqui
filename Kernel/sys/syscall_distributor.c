@@ -21,17 +21,25 @@ int (*syscalls[SHUTDOWN-READ+1])(ddword, ddword, ddword);
 static char* song_repository_addr = (char*)0x500000;
 static uint32_t song_read_offset = 0;
 
-static int syscall_set_opts(ddword request, ddword params, ddword arg3) {
+static int syscall_set_opts(ddword fd, ddword request, ddword params) {
 
-	if (request == REQUEST_CLEAR_SCREEN) {
+	if (fd == STDOUT) {
 
-		clc();
+		if (request == REQUEST_CLEAR_SCREEN) {
 
-	} else if (request == REQUEST_SET_COLOR) {
+			clc();
 
-		set_colour_raw(params);
-	} else if (request == REQUEST_RESET) {
-		set_colour(COLOR_BLACK, COLOR_LIGHT_GREY);
+		} else if (request == REQUEST_SET_COLOR) {
+
+			set_colour_raw(params);
+		} else if (request == REQUEST_RESET) {
+			set_colour(COLOR_BLACK, COLOR_LIGHT_GREY);
+		}
+	} else if (fd == STDFILE) {
+		if ( request == REQUEST_RESET ) {
+
+			song_read_offset = 0;
+		}
 	}
 
 

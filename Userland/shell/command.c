@@ -37,7 +37,7 @@ void echo(char** args, int argc) {
 }
 
 void clear(char** args, int argc) {
-	set_opts(REQUEST_CLEAR_SCREEN, 0);
+	set_opts(STDOUT, REQUEST_CLEAR_SCREEN, 0);
 }
 
 void commands(char** args, int argc) {
@@ -164,7 +164,7 @@ void setcolor(char** args, int argc) {
 		return;
 	}
 
-	set_opts(REQUEST_SET_COLOR, build_colour(fore, back));
+	set_opts(STDOUT, REQUEST_SET_COLOR, build_colour(fore, back));
 	clear(args, argc);
 }
 
@@ -173,6 +173,7 @@ void beep(char *argv[], int argc) {
 }
 
 // https://en.wikipedia.org/wiki/Scientific_pitch_notation
+// 
 static float base_frequencies[] = {
 	16.352, // C   0
 	17.324, // C#  1
@@ -191,7 +192,7 @@ static float base_frequencies[] = {
 
 void play_sound(char *argv[], int argc) {
 
-	char songs[2048];
+	char songs[4096];
 	song_t parsed_songs[20];
 	int song_number = 0;
 	int choice = -1;
@@ -201,7 +202,9 @@ void play_sound(char *argv[], int argc) {
 
 	printf("Welcome to Sound Player 1.0\n");
 	printf("Fetching sounds...\n");
-	fgets(STDFILE, songs, 2048);
+	fgets(STDFILE, songs, 4096);
+
+	printf("%s\n", songs);
 
 	printf("Parsing Sounds...\n");
 	song_number = parse_sounds(songs, parsed_songs);
@@ -227,8 +230,6 @@ void play_sound(char *argv[], int argc) {
 
 	one_note_length = 60000 / parsed_songs[choice-1].beat * 4;
 
-	printf("o:%d ", one_note_length);
-
 	for (; i < parsed_songs[choice-1].read_notes; i++) {
 
 		current_note = parsed_songs[choice-1].notes[i];
@@ -237,6 +238,8 @@ void play_sound(char *argv[], int argc) {
 		beepwo( one_note_length / current_note.duration,
 			base_frequencies[current_note.pitch] * (1 << current_note.octave) );
 	}
+	set_opts(STDFILE, REQUEST_RESET, 0);
+
 }
 
 /*==========================================
@@ -304,7 +307,12 @@ static void parse_header(char *raw, song_t* parse_song) {
 
 	parse_song->default_duration = (uint8_t)(*(raw+2) - '0');
 	parse_song->default_octave = (uint8_t)(*(raw+6) - '0');
-	parse_song->beat = (uint16_t)(*(raw+10) - '0')*100+(uint16_t)(*(raw+11) - '0')*10+(uint16_t)(*(raw+12) - '0');
+	if (*(raw+9) == '=') {
+			parse_song->beat = (uint16_t)(*(raw+10) - '0')*10+(uint16_t)(*(raw+11 ) - '0');
+	}
+	else {
+		parse_song->beat = (uint16_t)(*(raw+10) - '0')*100+(uint16_t)(*(raw+11) - '0')*10+(uint16_t)(*(raw+12) - '0');
+	}
 }
 
 static void parse_body(char *raw, song_t* parse_song) {

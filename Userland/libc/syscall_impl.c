@@ -28,6 +28,6 @@ int shutdown(void) {
 	return _syscaller((int)SHUTDOWN, 0, 0, 0);
 }
 
-int set_opts(uint32_t request, uint16_t options) {
-	return _syscaller((int)OPTS, request, options, 0);
+int set_opts(uint8_t fd, uint32_t request, uint16_t options) {
+	return _syscaller((int)OPTS, fd, request, options);
 }
