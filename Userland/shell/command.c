@@ -204,8 +204,6 @@ void play_sound(char *argv[], int argc) {
 	printf("Fetching sounds...\n");
 	fgets(STDFILE, songs, 4096);
 
-	printf("%s\n", songs);
-
 	printf("Parsing Sounds...\n");
 	song_number = parse_sounds(songs, parsed_songs);
 
