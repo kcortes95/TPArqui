@@ -3,7 +3,7 @@
 
 #include "include/video.h"
 
-static int on_ack_keyboard(ddword id, ddword arg1, ddword arg2, ddword arg3);
+static int on_ack_keyboard(syscall_id id, ddword arg1, ddword arg2, ddword arg3);
 
 keyboard_status_t keyboard_status;
 keyboard_buffer_t keyboard_buffer;

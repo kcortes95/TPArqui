@@ -10,9 +10,10 @@ void play(uint32_t frequency) {
 	if ((frequency<19) || (frequency>22000)) return;
 
 	// 
+	frequency = 1193180L / frequency;
 	_outport(0x43, 0xB6);
 	_outport(0x42, frequency & 0xFF);
-	_outport(0x42, ((frequency & 0xFF) >> 8) & 0x0F );
+	_outport(0x42, (frequency & 0x0F00) >> 8 );
 	_outport(0x61, _inport(0x61) | 3);
 }
 
@@ -25,7 +26,7 @@ void beep(void) {
 	beeplf(100, 200);
 }
 
-void beeplf(unsigned int length, unsigned int freq) {
+void beeplf(uint32_t length, uint32_t freq) {
 	
 	if (SOUND_DEBUG) {
 		println("beep registered:");
