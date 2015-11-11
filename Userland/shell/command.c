@@ -307,7 +307,7 @@ static void parse_header(char *raw, song_t* parse_song) {
 
 	parse_song->default_duration = (uint8_t)(*(raw+2) - '0');
 	parse_song->default_octave = (uint8_t)(*(raw+6) - '0');
-	if (*(raw+9) == '=') {
+	if (*(raw+12) == ':' || *(raw+12) == 0) {
 			parse_song->beat = (uint16_t)(*(raw+10) - '0')*10+(uint16_t)(*(raw+11 ) - '0');
 	}
 	else {

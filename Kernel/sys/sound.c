@@ -13,7 +13,7 @@ void play(uint32_t frequency) {
 	frequency = 1193180L / frequency;
 	_outport(0x43, 0xB6);
 	_outport(0x42, frequency & 0xFF);
-	_outport(0x42, (frequency & 0x0F00) >> 8 );
+	_outport(0x42, (frequency & 0xFF00) >> 8 );
 	_outport(0x61, _inport(0x61) | 3);
 }
 
@@ -23,27 +23,15 @@ void pause() {
 }
 
 void beep(void) {
-	beeplf(100, 200);
+	beeplf(100, 261);
 }
 
 void beeplf(uint32_t length, uint32_t freq) {
 	
-	if (SOUND_DEBUG) {
-		println("beep registered:");
-		prints("freq: ");
-		puti(freq);
-		prints(" duration: ");
-		puti(length);
-		println("ms");
-
-		prints("playing...");
-	}
+	
 	if (freq != 0) {
 		play(freq);
 	}
 	wait(length);
 	pause();
-	if (SOUND_DEBUG )
-		println("stopping");
-
 }
