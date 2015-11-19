@@ -17,7 +17,8 @@ typedef enum {
 typedef enum {
 	KEYBOARD = 0,
 	TIMER_TICK,
-	SYSCALL
+	SYSCALL,
+	MOUSE
 } interrupt_id;
 
 #define MAX_LISTENERS_ALLOWED 32
@@ -38,5 +39,6 @@ void on_interrupt(interrupt_id, ddword, ddword, ddword, ddword);
 void on_timer_tick(ddword, ddword, ddword, ddword);
 void on_keyboard(ddword, ddword, ddword, ddword);
 void on_syscall(ddword, ddword, ddword, ddword, ddword);
+void on_mouse(ddword id, ddword arg1, ddword arg2, ddword arg3);
 
 #endif

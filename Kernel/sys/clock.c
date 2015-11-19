@@ -28,7 +28,7 @@ int valid_date(uint8_t year, uint8_t month, uint8_t day){
 	if (isleapyear(year) && month == 2) {
 		monthlen[1]++;
 	}
-	if (day>monthlen[month-1] || day < 1) {
+	if (day > monthlen[month-1] || day < 1) {
 		return 0;
 	}
 	return 1;

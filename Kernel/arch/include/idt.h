@@ -4,6 +4,7 @@
 #include "types.h"
 
 #define PIC_DATA_PORT 0x21
+#define PIC2_DATA_PORT 0xA1
 
 #define IDT_SIZE 256
 

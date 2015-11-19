@@ -10,8 +10,6 @@
 #include "sys/include/keyboard.h"
 #include "sys/include/syscalls.h"
 #include "sys/include/sound.h"
-#include "sys/include/playNote.h"
-// #include "util/include/util.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -121,6 +119,8 @@ void play_intro() {
 
 int main() {
 
+	clc();
+
 	init_idt();
 	init_interrupts();
 	init_timer();
@@ -135,7 +135,7 @@ int main() {
 	// playNote(9121);
 	// }
 	
-	clc();
+	// clc();
 
 	// Con esto ejecutamos Userland
 	((EntryPoint)sampleCodeModuleAddress)();

@@ -8,7 +8,20 @@ void init_idt() {
 
 	_get_idtr(&idtr);
 
-	_outport(PIC_DATA_PORT, 0xFC);
+	// Remap the irq table.
+    _outport(0x20, 0x11);
+    _outport(0xA0, 0x11);
+    _outport(0x21, 0x20);
+    _outport(0xA1, 0x28);
+    _outport(0x21, 0x04);
+    _outport(0xA1, 0x02);
+    _outport(0x21, 0x01);
+    _outport(0xA1, 0x01);
+    _outport(0x21, 0x0);
+    _outport(0xA1, 0x0);
+
+	_outport(PIC_DATA_PORT, 0x00); // 1110 1110
+	_outport(PIC2_DATA_PORT, 0x00); // 1110 1110
 }
 
 
