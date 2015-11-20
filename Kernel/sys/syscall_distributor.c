@@ -221,7 +221,7 @@ void init_syscalls() {
 	syscalls[SET_TIME] = &syscall_set_time;
 	syscalls[BEEP] = &syscall_beep;
 	syscalls[PLAY_SOUND] = &syscall_play_sound;
-	syscalls[EVENT] = &syscall_event;
+	// syscalls[EVENT] = &syscall_event;
 	syscalls[SHUTDOWN] = &syscall_shutdown;
 
 	syscall_listener.call = &on_ack_syscall;
