@@ -11,6 +11,7 @@ typedef enum {
 	SET_TIME,
 	BEEP,
 	PLAY_SOUND,
+	EVENT,
 	SHUTDOWN
 } syscall_id;
 

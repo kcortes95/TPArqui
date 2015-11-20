@@ -23,7 +23,7 @@ static uint32_t song_read_offset = 0;
 
 static int syscall_set_opts(ddword fd, ddword request, ddword params) {
 
-	if (fd == STDOUT) {
+	if (fd == STDOUT) {	
 
 		if (request == REQUEST_CLEAR_SCREEN) {
 
@@ -221,6 +221,7 @@ void init_syscalls() {
 	syscalls[SET_TIME] = &syscall_set_time;
 	syscalls[BEEP] = &syscall_beep;
 	syscalls[PLAY_SOUND] = &syscall_play_sound;
+	syscalls[EVENT] = &syscall_event;
 	syscalls[SHUTDOWN] = &syscall_shutdown;
 
 	syscall_listener.call = &on_ack_syscall;

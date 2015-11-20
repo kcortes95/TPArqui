@@ -125,10 +125,10 @@ int main() {
 	init_interrupts();
 	init_timer();
 	init_syscalls();
-	init_mouse();
+	//init_mouse();
 	init_keyboard();
 
-	// play_intro();
+	play_intro();
 //	beeplf(2,9121); //de lo de goffan
 //	playNote(9121);
 	// while(1){
@@ -136,10 +136,10 @@ int main() {
 	// playNote(9121);
 	// }
 	
-	// clc();
+	clc();
 
 	// Con esto ejecutamos Userland
-	// ((EntryPoint)sampleCodeModuleAddress)();
+	((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;
 }
