@@ -31,3 +31,7 @@ int shutdown(void) {
 int set_opts(uint8_t fd, uint32_t request, uint16_t options) {
 	return _syscaller((int)OPTS, fd, request, options);
 }
+
+int register_event(uint8_t id, event_listener_t listener) {
+	return _syscaller((int)EVENT, id, (uintptr_t)listener, 0);
+}

@@ -16,6 +16,7 @@ static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3);
 static int syscall_beep(ddword length, ddword freq, ddword arg3);
 static int syscall_shutdown(ddword arg1, ddword arg2, ddword arg3);
 static int syscall_set_opts(ddword arg1, ddword arg2, ddword arg3);
+static int syscall_event(ddword id, ddword func_ptr, ddword arg3);
 
 int (*syscalls[SHUTDOWN-READ+1])(ddword, ddword, ddword);
 static char* song_repository_addr = (char*)0x500000;
@@ -195,6 +196,17 @@ static int syscall_play_sound(ddword length, ddword freq, ddword arg3) {
 	return 0;
 }
 
+static int syscall_event(ddword id, ddword func_ptr, ddword arg3) {
+
+	listener_t listener;
+
+	listener.call = (ddword)func_ptr;
+
+	add_listener(id, listener);
+
+	return 0;
+}
+
 /**
  * Listener de syscalls
  * @param id   id del syscall
@@ -221,7 +233,7 @@ void init_syscalls() {
 	syscalls[SET_TIME] = &syscall_set_time;
 	syscalls[BEEP] = &syscall_beep;
 	syscalls[PLAY_SOUND] = &syscall_play_sound;
-	// syscalls[EVENT] = &syscall_event;
+	syscalls[EVENT] = &syscall_event;
 	syscalls[SHUTDOWN] = &syscall_shutdown;
 
 	syscall_listener.call = &on_ack_syscall;

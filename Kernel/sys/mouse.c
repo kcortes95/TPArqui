@@ -12,13 +12,13 @@ void on_mouse_event(ddword id, ddword rdi, ddword rsi, ddword rdx);
 
 void init_mouse() {
 
-	listener_t tt_listener;
+	listener_t mouse_listener;
 
 	mouse_install();
 
-	tt_listener.call = &on_mouse_event;
+	mouse_listener.call = &on_mouse_event;
 
-	add_listener(MOUSE, tt_listener);
+	add_listener(MOUSE, mouse_listener);
 
 }
 
