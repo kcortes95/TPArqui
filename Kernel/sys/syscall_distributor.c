@@ -198,6 +198,8 @@ static int syscall_play_sound(ddword length, ddword freq, ddword arg3) {
 
 static int syscall_event(ddword id, ddword func_ptr, ddword arg3) {
 
+	println("registering event");
+
 	listener_t listener;
 
 	listener.call = (ddword)func_ptr;
