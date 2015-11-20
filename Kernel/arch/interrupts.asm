@@ -5,9 +5,6 @@ EXTERN on_timer_tick
 
 EXTERN mouse_handler
 
-EXTERN puti
-EXTERN putc
-
 GLOBAL _load_handler
 GLOBAL _get_idtr
 
@@ -15,9 +12,6 @@ GLOBAL _keyboard_interrupt_handler
 GLOBAL _mouse_interrupt_handler
 GLOBAL _syscall_interrupt_handler
 GLOBAL _tt_interrupt_handler
-
-GLOBAL _force_int33
-GLOBAL _mouse_init
 
 section .text
 
@@ -104,66 +98,13 @@ _syscall_interrupt_handler:
 	iretq
 
 _mouse_interrupt_handler:
-	in al, 60h
-	mov	bl,al
-	
-	call		mouse_handler
+;	in al, 60h
+;	mov	bl,al
 
-	mov	al,20h			; Envio de EOI generico al PIC
-	out	0A0h, al 		; y al slave
-	out	20h, al
+	call		on_mouse
+
+	mov	al,0x20			; Envio de EOI generico al PIC
+	out	0xA0, al 		; y al slave
+	out	0x20, al
 	
 	iretq
-
-
-_force_int33:
-	mov rax, -1
-	; mov rdi, -1
-	mov rsi, -1
-	mov rdx, -1
-	mov r8, -1
-	mov ax, di
-	int 33h
-	ret
-
-_mouse_init:
-	ENTER
-
-	mov rdi, 0
-	mov di, 4
-	call puti
-
-	mov di, ' '
-	call putc
-	mov rax, 0
-	mov ax, 0
-
-	mov di, ax
-	call puti
-
-	mov di, ' ',
-	call putc
-
-	int 33h
-	
-	mov di, ax
-	call puti
-
-	mov di, ' '
-	call putc
-
-	mov di, bx
-	call puti
-
-	mov di, ' '
-	call putc
-
-	mov ax, 1
-	int 33h
-
-
-
-	LEAVE
-
-
-

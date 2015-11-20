@@ -5,7 +5,7 @@
 #define SHELL_BUFFER_SIZE 128
 #define SHELL_TEXT "$> "
 
-typedef struct cmd_entry {
+typedef struct {
 	char* name;
 	char* help;
 	void (*func)(char** argv, int argc);

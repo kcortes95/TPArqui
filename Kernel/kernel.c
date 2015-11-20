@@ -125,6 +125,7 @@ int main() {
 	init_interrupts();
 	init_timer();
 	init_syscalls();
+	init_mouse();
 	init_keyboard();
 
 	// play_intro();
@@ -136,11 +137,6 @@ int main() {
 	// }
 	
 	// clc();
-
-	while (1) {
-
-		
-	}
 
 	// Con esto ejecutamos Userland
 	// ((EntryPoint)sampleCodeModuleAddress)();
