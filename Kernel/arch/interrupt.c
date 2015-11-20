@@ -244,6 +244,7 @@ void mouse_install() {
   idt_set_handler(0x33, (ddword)&_mouse_interrupt_handler);
   idt_set_handler(0x2d, (ddword)&_mouse_interrupt_handler);
   idt_set_handler(0x2c, (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x74, (ddword)&_mouse_interrupt_handler);
 
   //wait(500);
 
