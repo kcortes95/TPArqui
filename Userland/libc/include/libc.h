@@ -29,6 +29,8 @@ typedef enum {
 
 extern int _syscaller(int, int, int, int);
 
+typedef void (*event_listener_t)(uint32_t, uint32_t, uint32_t);
+
 int get_time(date_t *);
 int set_time(date_t *);
 int write(int fd, char * str, int size);
@@ -38,8 +40,6 @@ int make_beep();
 int shutdown(void);
 int set_opts(uint8_t fd, uint32_t request, uint16_t options);
 int register_event(uint8_t id, event_listener_t listener);
-
-typedef void (*event_listener_t)(uint32_t, uint32_t, uint32_t);
 
 #define REQUEST_CLEAR_SCREEN 0
 #define REQUEST_SET_COLOR 1
