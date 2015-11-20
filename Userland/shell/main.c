@@ -2,6 +2,7 @@
 #include <shell.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <libc.h>
 
 void sample_func(uint32_t a, uint32_t b, uint32_t c) {
 
