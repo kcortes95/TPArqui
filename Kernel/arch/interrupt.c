@@ -23,7 +23,7 @@ void mouse_install();
 void mouse_wait(uint8_t a_type);
 void mouse_handler(ddword id, ddword rdi, ddword rsi, ddword rdx);
 
-static listener_pool_t listeners_map[SYSCALL - KEYBOARD];
+static listener_pool_t listeners_map[MOUSE - KEYBOARD];
 
 void init_interrupts(void) {
 
@@ -40,7 +40,15 @@ void init_interrupts(void) {
 	// idt_set_handler(0x33, (ddword)&_mouse_interrupt_handler);
 	idt_set_handler(0x80, (ddword)&_syscall_interrupt_handler);
 
-	for (; i < SYSCALL - KEYBOARD; i++) {
+  idt_set_handler(12,   (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x12, (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x24, (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x33, (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x2d, (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x2c, (ddword)&_mouse_interrupt_handler);
+  idt_set_handler(0x74, (ddword)&_mouse_interrupt_handler);
+
+	for (; i < MOUSE - KEYBOARD; i++) {
 		listeners_map[i].size = 0;
 	}
 
@@ -99,7 +107,7 @@ void on_mouse(ddword id, ddword arg1, ddword arg2, ddword arg3) {
 
 //Mouse.inc by SANiK
 //License: Use as you wish, except to cause damage
-uint8_t mouse_cycle=0;     //unsigned char
+uint8_t mouse_cycle = 0;     //unsigned char
 int8_t mouse_byte[3];    //signed char
 int8_t mouse_x=0;         //signed char
 int8_t mouse_y=0;         //signed char
@@ -137,33 +145,86 @@ uint8_t x = 0, y = 0;
 
 void mouse_handler(ddword id, ddword rdi, ddword rsi, ddword rdx)
 {
+  static signed char delta_x, delta_y, flags;
+  int x_final,y_final;
   // static unsigned char cycle = 0;
   // static char mouse_bytes[3];
   mouse_byte[mouse_cycle++] = _inport(0x60);
- 
-  if (mouse_cycle == 3) { // if we have all the 3 bytes...
-    mouse_cycle = 0; // reset the counter
+  
+
+  // if (mouse_cycle == 3) { // if we have all the 3 bytes...
+    // mouse_cycle = 0; // reset the counter
     // do what you wish with the bytes, this is just a sample
-    if ((mouse_byte[0] & 0x80) || (mouse_byte[0] & 0x40))
-      return; // the mouse only sends information about overflowing, do not care about it and return
-    if (!(mouse_byte[0] & 0x20))
-      y |= 0xFFFFFF00; //delta-y is a negative value
-    if (!(mouse_byte[0] & 0x10))
-      x |= 0xFFFFFF00; //delta-x is a negative value
-    if (mouse_byte[0] & 0x4)
-      prints("Middle button is pressed!n");
-    if (mouse_byte[0] & 0x2)
-      prints("Right button is pressed!n");
-    if (mouse_byte[0] & 0x1)
-      prints("Left button is pressed!n");
+    // if ((mouse_byte[0] & 0x80) || (mouse_byte[0] & 0x40))
+      // return; // the mouse only sends information about overflowing, do not care about it and return
+    // if (!(mouse_byte[0] & 0x20))
+      // y |= 0xFFFFFF00; //delta-y is a negative value
+    // if (!(mouse_byte[0] & 0x10))
+      // x |= 0xFFFFFF00; //delta-x is a negative value
+    // if (mouse_byte[0] & 0x4)
+    //   prints("Middle button is pressed!n");
+    // if (mouse_byte[0] & 0x2)
+    //   prints("Right button is pressed!n");
+    // if (mouse_byte[0] & 0x1)
+    //   prints("Left button is pressed!n");
     // do what you want here, just replace the puts's to execute an action for each button
     // to use the coordinate data, use mouse_bytes[1] for delta-x, and mouse_bytes[2] for delta-y
+  // }
+
+  switch(mouse_cycle){
+    case 0:{
+      flags = _inport(0x60) & 0x0FF;
+      if ((flags & 8) == 0){
+        mouse_cycle=0;
+        return;
+      }
+      mouse_cycle++;  
+      break;
+    }
+    case 1:{
+      delta_x = _inport(0x60) & 0x0FF;
+      mouse_cycle++;
+      break;
+    }
+    case 2:{
+      delta_y = _inport(0x60) & 0x0FF;
+      mouse_cycle = 0;
+      if((flags & 1) != 0){
+        println("left button pressed");
+        // mouse.l_button_pressed=1;
+      }
+      if((flags & 2)!=0){
+        println("right button pressed");
+        // mouse.r_button_pressed=1;
+      }
+      if((flags & 4)!=0){
+        println("middle button pressed");
+        // mouse.m_button_pressed=1;
+      }
+      int p = x;
+      int u = y;
+      x_final=(delta_x%5)+p;
+      x_final=x_final>79?79:x_final;
+      x_final=x_final<0?0:x_final;
+      y_final=(delta_y%5)*(-1)+u;
+      y_final=y_final>24?24:y_final;
+      y_final=y_final<0?0:y_final;
+      // mouse_cursor(mouse.x,mouse.y,x_final,y_final);
+      // mouse.x=x_final;
+      // mouse.y=y_final;
+      break;
+    }
+    default:{
+      break;
+    } 
   }
+
   prints("x: ");
-  puti(x);
+  puti(x_final);
   prints(" y: ");
-  puti(y);
+  puti(y_final);
   putc('\n');
+  
 }
 
 void mouse_wait(uint8_t a_type) {
@@ -240,11 +301,7 @@ void mouse_install() {
   puti(f); putc('\n');
 
   //Setup the mouse handler
-  idt_set_handler(12, (ddword)&_mouse_interrupt_handler);
-  idt_set_handler(0x33, (ddword)&_mouse_interrupt_handler);
-  idt_set_handler(0x2d, (ddword)&_mouse_interrupt_handler);
-  idt_set_handler(0x2c, (ddword)&_mouse_interrupt_handler);
-  idt_set_handler(0x74, (ddword)&_mouse_interrupt_handler);
+  
 
   //wait(500);
 

@@ -6,6 +6,8 @@ IDTR idtr;
 
 void init_idt() {
 
+    _cli();
+
 	_get_idtr(&idtr);
 
 	// Remap the irq table.
@@ -20,7 +22,7 @@ void init_idt() {
     _outport(0x21, 0x0);
     _outport(0xA1, 0x0);
 
-    _cli();
+    
 
 	_outport(PIC_DATA_PORT, 0xf8); // 1111 1000
 	_outport(PIC2_DATA_PORT, 0xef); // 1110 1111

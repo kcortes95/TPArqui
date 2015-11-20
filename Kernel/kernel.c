@@ -137,8 +137,13 @@ int main() {
 	
 	// clc();
 
+	while (1) {
+
+		
+	}
+
 	// Con esto ejecutamos Userland
-	((EntryPoint)sampleCodeModuleAddress)();
+	// ((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;
 }

@@ -104,7 +104,15 @@ _syscall_interrupt_handler:
 	iretq
 
 _mouse_interrupt_handler:
+	in al, 60h
+	mov	bl,al
+	
 	call		mouse_handler
+
+	mov	al,20h			; Envio de EOI generico al PIC
+	out	0A0h, al 		; y al slave
+	out	20h, al
+	
 	iretq
 
 
