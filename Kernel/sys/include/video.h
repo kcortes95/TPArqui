@@ -13,6 +13,8 @@ void set_colour_raw(uint8_t colour);
 uint8_t get_fg_colour();
 uint8_t get_bg_colour();
 
+void unset_cursor(uint8_t x, uint8_t y);
+void set_cursor(uint8_t x, uint8_t y);
 void set_blink(uint16_t position);
 
 void putcxy(char c, uint8_t x, uint8_t y);

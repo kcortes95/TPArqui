@@ -3,37 +3,6 @@
 #include "../arch/include/arch.h"
 #include "../util/include/util.h"
 
-int isleapyear(uint8_t year){
-	return ((!(year%4) && (year%100)) || !(year%400));
-}
-
-int valid_time(uint8_t sec, uint8_t min, uint8_t hrs) {
-
-	if( sec >60 || sec < 0	||
-		min >60 || min < 0	||
-		hrs >24 || sec < 0)
-	{
-		return 0;
-	}
-	return 1;
-
-}
-//1 valid, 0 invalid
-int valid_date(uint8_t year, uint8_t month, uint8_t day){
-	uint8_t monthlen[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-	if (year < 0 || month < 1 || year < 0 || month > 12) {
-		return 0;
-	}
-	if (isleapyear(year) && month == 2) {
-		monthlen[1]++;
-	}
-	if (day > monthlen[month-1] || day < 1) {
-		return 0;
-	}
-	return 1;
-}
-
 /*===================================
 *************    GETTERS
 ===================================*/

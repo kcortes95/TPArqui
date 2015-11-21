@@ -172,6 +172,30 @@ void beep(char *argv[], int argc) {
 	make_beep();
 }
 
+void mouse_hide(char* argv[], int argc) {
+	set_opts(STDMOUSE, REQUEST_HIDE, 0);
+}
+
+void mouse_show(char* argv[], int argc) {
+	set_opts(STDMOUSE, REQUEST_SHOW, 0);
+}
+
+void mouse_sensitivity(char* argv[], int argc) {
+	uint16_t sensitivty;
+	if (argc != 1) {
+		printf("usage: mouse_sensitivity [sensitivty]\n");
+		printf("0 < sensitivty <= 100\n");
+		return;
+	}
+	sensitivty = atoi(argv[0]);
+	if (sensitivty < 0 || sensitivty > 100) {
+		printf("usage: mouse_sensitivity [sensitivty]\n");
+		printf("0 < sensitivty <= 100\n");
+		return;
+	}
+	set_opts(STDMOUSE, REQUEST_SENSITIVTY, sensitivty);
+}
+
 // https://en.wikipedia.org/wiki/Scientific_pitch_notation
 // 
 static float base_frequencies[] = {
@@ -576,10 +600,6 @@ void reset_vect(char vec[]) {
 		vec[i] = 0;
 	}
 }
-
-/*TODO EPIC ASCII STAR*/
-//TODO EVIL MUSIC 
-
 
 void help_error_print() {
 	printf("\nInvoke help as follows: \"help \"command_name\"\".\nTo see list of available commands type \"commands\"\n");	

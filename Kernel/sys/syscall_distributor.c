@@ -41,6 +41,15 @@ static int syscall_set_opts(ddword fd, ddword request, ddword params) {
 
 			song_read_offset = 0;
 		}
+	} else if (fd == STDMOUSE) {
+
+		if (request == REQUEST_HIDE) {
+			mouse_set_visible(no);
+		} else if (request == REQUEST_SHOW) {
+			mouse_set_visible(yes);
+		} else if (request == REQUEST_SENSITIVTY) {
+			mouse_set_sensitivity(params);
+		}
 	}
 
 
@@ -101,11 +110,10 @@ static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3) {
 	uint8_t sec 	= time->sec;
 	uint8_t min 	= time->min;
 	uint8_t hour	= time->hour;
-	uint8_t mon	= time->mon;
+	uint8_t mon 	= time->mon;
 	uint8_t year	= time->year;
-	uint8_t day	= time->day;
+	uint8_t day 	= time->day;
 
-    // Convert binary to BCD values if necessary
 	if (!(registerB & 0x04)) {
 		sec 	= BIN2BCD(sec);
 		min 	= BIN2BCD(min);
@@ -116,12 +124,9 @@ static int syscall_set_time(ddword time_ptr, ddword arg2, ddword arg3) {
 
 	}
 
-	// Convert 12 hour clock to 24 hour clock if necessary
 	if (!(registerB & 0x02) && (hour & 0x80)) {
 		hour = ((hour & 0x7F) + 12) % 24;
 	}
-
-
 
 	clock_set_seconds(sec);
 	clock_set_minutes(min);
@@ -198,13 +203,14 @@ static int syscall_play_sound(ddword length, ddword freq, ddword arg3) {
 
 static int syscall_event(ddword id, ddword func_ptr, ddword arg3) {
 
-	println("registering event");
-
 	listener_t listener;
 
-	listener.call = (ddword)func_ptr;
+	listener.call = ( int(*)(syscall_id, ddword, ddword, ddword) )func_ptr;
 
-	add_listener(id, listener);
+	if (id == MOUSE) {
+		
+		add_mouse_listener(listener);
+	}
 
 	return 0;
 }

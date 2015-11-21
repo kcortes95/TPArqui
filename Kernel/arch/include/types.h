@@ -7,7 +7,7 @@
 #define FALSE 0
 
 #define true TRUE
-#define false FALSE;
+#define false FALSE
 
 #define YES true
 #define NO false

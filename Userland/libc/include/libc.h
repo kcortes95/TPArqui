@@ -25,11 +25,14 @@ typedef enum {
 	SHUTDOWN
 } syscall_id;
 
+typedef enum {
+	KEYBOARD = 0,
+	MOUSE = 3
+} event_id;
+
 /* syscalls */
 
 extern int _syscaller(int, int, int, int);
-
-typedef void (*event_listener_t)(uint32_t, uint32_t, uint32_t);
 
 int get_time(date_t *);
 int set_time(date_t *);
@@ -39,11 +42,14 @@ int beepwo(uint32_t, uint32_t);
 int make_beep();
 int shutdown(void);
 int set_opts(uint8_t fd, uint32_t request, uint16_t options);
-int register_event(uint8_t id, event_listener_t listener);
+int register_event(uint8_t id, int(*)(event_id, uint64_t, uint64_t, uint64_t));
 
 #define REQUEST_CLEAR_SCREEN 0
 #define REQUEST_SET_COLOR 1
 #define REQUEST_RESET 2
+#define REQUEST_HIDE 3
+#define REQUEST_SHOW 4
+#define REQUEST_SENSITIVTY 5
 
 #define COLOR_BLACK					(char)0
 #define COLOR_BLUE					(char)1

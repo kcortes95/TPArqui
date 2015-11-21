@@ -4,6 +4,12 @@
 
 #include "include/video.h"
 
+uint8_t sensitivty = 8;
+
+bool is_visible = yes;
+
+listener_pool_t event_listeners;
+
 void mouse_write(uint8_t a_write);
 uint8_t mouse_read();
 void mouse_install();
@@ -18,7 +24,20 @@ void init_mouse() {
 
 	mouse_listener.call = &on_mouse_event;
 
+  event_listeners.size = 0;
+
 	add_listener(MOUSE, mouse_listener);
+}
+
+error_t add_mouse_listener(listener_t listener) {
+
+  if ( event_listeners.size >= MAX_LISTENERS_ALLOWED ) {
+    return 1;
+  }
+
+  event_listeners.listeners[event_listeners.size++] = listener;
+
+  return 0;
 
 }
 
@@ -30,153 +49,82 @@ int8_t mouse_byte[3];    //signed char
 int8_t mouse_x=0;         //signed char
 int8_t mouse_y=0;         //signed char
 
-//Mouse functions
-// void mouse_handler()
-// {
-//   switch(mouse_cycle)
-//   {
-//     case 0:
-//       mouse_byte[0]=_inport(0x60);
-//       mouse_cycle++;
-//       break;
-//     case 1:
-//       mouse_byte[1]=_inport(0x60);
-//       mouse_cycle++;
-//       break;
-//     case 2:
-//       mouse_byte[2]=_inport(0x60);
-//       mouse_x=mouse_byte[1];
-//       mouse_y=mouse_byte[2];
-//       mouse_cycle=0;
-//       break;
-//   }
-//   prints("x: ");
-//   puti(mouse_x);
-//   prints(" y: ");
-//   puti(mouse_y);
-//   putc('\n');
-// }
-// 
-// 
-uint16_t x = 0, y = 0;
+int16_t x = 0, y = 0;
 
 
-void on_mouse_event(ddword id, ddword rdi, ddword rsi, ddword rdx)
-{
-  //static int16_t delta_x, delta_y, flags;
-  //int16_t x_final,y_final;
-  // static unsigned char cycle = 0;
-  // static char mouse_bytes[3];
-  //mouse_byte[mouse_cycle++] = _inport(0x60);
-  
+void on_mouse_event(ddword id, ddword rdi, ddword rsi, ddword rdx) {
 
-  // if (	mouse_cycle == 3) { // if we have all the 3 bytes...
-    // mouse_cycle = 0; // reset the counter
-    // do what you wish with the bytes, this is just a sample
-    // if ((mouse_byte[0] & 0x80) || (mouse_byte[0] & 0x40))
-      // return; // the mouse only sends information about overflowing, do not care about it and return
-    // if (!(mouse_byte[0] & 0x20))
-      // y |= 0xFFFFFF00; //delta-y is a negative value
-    // if (!(mouse_byte[0] & 0x10))
-      // x |= 0xFFFFFF00; //delta-x is a negative value
-    // if (mouse_byte[0] & 0x4)
-    //   prints("Middle button is pressed!n");
-    // if (mouse_byte[0] & 0x2)
-    //   prints("Right button is pressed!n");
-    // if (mouse_byte[0] & 0x1)
-    //   prints("Left button is pressed!n");
-    // do what you want here, just replace the puts's to execute an action for each button
-    // to use the coordinate data, use mouse_bytes[1] for delta-x, and mouse_bytes[2] for delta-y
-  // }
+  int i = 0;
+  uint8_t buttons_flag = 0;
 
-  switch(mouse_cycle)
-  {
-    case 0:
-      mouse_byte[0] = _inport(0x60);
-      mouse_cycle++;
-      break;
-    case 1:
-      mouse_byte[1] = _inport(0x60);
-      mouse_cycle++;
-      break;
-    case 2:
-      mouse_byte[2] = _inport(0x60);
-      mouse_x = mouse_byte[1];
-      mouse_y = mouse_byte[2];
-      if (mouse_byte[0] & 0x1) {
-      	println("left button");
-      }
-      if (mouse_byte[0] & 0x2) {
-      	println("right button");
-      }
-      if (mouse_byte[0] & 0x4) {
-      	println("middle button");
-      }
+  if (is_visible)
+    unset_cursor(x/sensitivty, y/sensitivty);
 
+  if (mouse_cycle == 0) {
 
-      mouse_cycle = 0;
-      break;
+    mouse_byte[0] = _inport(0x60);
+    mouse_cycle++;
+
+  } else if (mouse_cycle == 1) {
+
+    mouse_byte[1] = _inport(0x60);
+    mouse_cycle++;
+
+  } else {
+
+    mouse_byte[2] = _inport(0x60);
+    mouse_x = mouse_byte[1];
+    mouse_y = mouse_byte[2];
+    if (mouse_byte[0] & 0x1) {
+      buttons_flag |= 1 << 0;
+    }
+    if (mouse_byte[0] & 0x2) {
+      buttons_flag |= 1 << 1;
+    }
+    if (mouse_byte[0] & 0x4) {
+      buttons_flag |= 1 << 2;
+    }
+
+    mouse_cycle = 0;
+
+    x += mouse_x;
+    y += mouse_y;
   }
-  prints("x: ");
-  puti(mouse_x);
-  prints(" y: ");
-  puti(mouse_y);
-  putc('\n');
 
-  // switch(mouse_cycle){
-  //   case 0:{
-  //     flags = _inport(0x60) & 0x00FF;
-  //     if ((flags & 8) == 0){
-  //       mouse_cycle=0;
-  //       return;
-  //     }
-  //     mouse_cycle++;  
-  //     break;
-  //   }
-  //   case 1:{
-  //     delta_x = _inport(0x60) & 0x00FF;
-  //     mouse_cycle++;
-  //     break;
-  //   }
-  //   case 2:{
-  //     delta_y = _inport(0x60) & 0x00FF;
-  //     mouse_cycle = 0;
-  //     if((flags & 0x1) != 0){
-  //       println("left button pressed");
-  //       // mouse.l_button_pressed=1;
-  //     }
-  //     if((flags & 0x2) != 0){
-  //       println("right button pressed");
-  //       // mouse.r_button_pressed=1;
-  //     }
-  //     if((flags & 0x4) != 0){
-  //       println("middle button pressed");
-  //       // mouse.m_button_pressed=1;
-  //     }
-  //     x_final = (delta_x % 5) + x;
-  //     x_final = x_final > 79 ? 79 : x_final;
-  //     x_final = x_final < 0 ? 0 : x_final;
-  //     y_final = (delta_y % 5) * (-1) + y;
-  //     y_final = y_final > 24 ? 24 : y_final;
-  //     y_final = y_final < 0 ? 0 : y_final;
-  //     // mouse_cursor(mouse.x,mouse.y,x_final,y_final);
-  //     // mouse.x=x_final;
-  //     // mouse.y=y_final;
-  //     x = x_final;
-  //     y = y_final;
-  //     break;
-  //   }
-  //   default:{
-  //     break;
-  //   } 
-  // }
+  if (mouse_cycle == 0) {
+
+    if (is_visible)
+      set_cursor(x/sensitivty, y/sensitivty);
+
+    for (; i < event_listeners.size; i++) {
+      event_listeners.listeners[i].call(MOUSE, x, y, buttons_flag);
+    }
+  }
+
+  
 
   // prints("x: ");
-  // puti(x_final);
+  // puti(x);
   // prints(" y: ");
-  // puti(y_final);
+  // puti(y);
   // putc('\n');
   
+}
+
+void mouse_set_visible(bool b) {
+  if (is_visible && !b) {
+    is_visible = b;
+    unset_cursor(x/sensitivty, y/sensitivty);
+  } else if (!is_visible && b) {
+    is_visible = b;
+    set_cursor(x/sensitivty, y/sensitivty);
+  }
+}
+
+void mouse_set_sensitivity(uint8_t s) {
+  unset_cursor(x/sensitivty, y/sensitivty);
+  sensitivty = s;
+  set_cursor(x/sensitivty, y/sensitivty);
 }
 
 void mouse_wait(uint8_t a_type) {
@@ -248,17 +196,6 @@ void mouse_install() {
   
   //Enable the mouse
   mouse_write(0xF4);
-  uint8_t f = mouse_read();  //Acknowledge
-
-  puti(f); putc('\n');
-
-  //Setup the mouse handler
-  
-
-  //wait(500);
-
-  // _mouse_init();
-
-  // mouse_handler();
+  mouse_read();  //Acknowledge
 
 }

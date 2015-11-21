@@ -5,6 +5,7 @@
 #define STDOUT 	1
 #define STDERR 	2
 #define STDFILE	3
+#define STDMOUSE 4
 #define SCANF_MAX_STR_BUFFER 64
 #include <stdarg.h>
 

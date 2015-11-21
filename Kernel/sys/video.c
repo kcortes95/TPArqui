@@ -46,6 +46,14 @@ void set_blink(uint16_t position) {
 	_outport(BLINK_HIGH_PORT, (unsigned char) ((position & 0xFF00) >> 8));
 }
 
+void unset_cursor(uint8_t x, uint8_t y) {
+	video_start_ptr[y*BUFFER_COL*2 + x*2 + BUFFER_ATTRIB] = (COLOR_BLACK << 4) | (COLOR_LIGHT_GREY & 0x0f);
+}
+
+void set_cursor(uint8_t x, uint8_t y) {
+	video_start_ptr[y*BUFFER_COL*2 + x*2 + BUFFER_ATTRIB] = (COLOR_LIGHT_GREY << 4) | (COLOR_BLACK & 0x0f);
+}
+
 void set_colour(uint8_t bg, uint8_t fg) {
 	current_colour = (bg << 4) | (fg & 0x0f);
 }
