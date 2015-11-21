@@ -58,7 +58,7 @@ void on_mouse_event(ddword id, ddword rdi, ddword rsi, ddword rdx) {
   uint8_t buttons_flag = 0;
 
   if (is_visible)
-    unset_cursor(x/sensitivty, y/sensitivty);
+    unset_cursor(x/sensitivty, BUFFER_ROW-y/sensitivty);
 
   if (mouse_cycle == 0) {
 
@@ -94,10 +94,10 @@ void on_mouse_event(ddword id, ddword rdi, ddword rsi, ddword rdx) {
   if (mouse_cycle == 0) {
 
     if (is_visible)
-      set_cursor(x/sensitivty, y/sensitivty);
+      set_cursor(x/sensitivty, BUFFER_ROW-y/sensitivty);
 
     for (; i < event_listeners.size; i++) {
-      event_listeners.listeners[i].call(MOUSE, x, y, buttons_flag);
+      event_listeners.listeners[i].call(MOUSE, x/sensitivty, BUFFER_ROW-y/sensitivty, buttons_flag);
     }
   }
 
@@ -114,17 +114,17 @@ void on_mouse_event(ddword id, ddword rdi, ddword rsi, ddword rdx) {
 void mouse_set_visible(bool b) {
   if (is_visible && !b) {
     is_visible = b;
-    unset_cursor(x/sensitivty, y/sensitivty);
+    unset_cursor(x/sensitivty, BUFFER_ROW - y/sensitivty);
   } else if (!is_visible && b) {
     is_visible = b;
-    set_cursor(x/sensitivty, y/sensitivty);
+    set_cursor(x/sensitivty, BUFFER_ROW - y/sensitivty);
   }
 }
 
 void mouse_set_sensitivity(uint8_t s) {
-  unset_cursor(x/sensitivty, y/sensitivty);
+  unset_cursor(x/sensitivty, BUFFER_ROW - y/sensitivty);
   sensitivty = s;
-  set_cursor(x/sensitivty, y/sensitivty);
+  set_cursor(x/sensitivty, BUFFER_ROW - y/sensitivty);
 }
 
 void mouse_wait(uint8_t a_type) {

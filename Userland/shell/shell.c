@@ -253,8 +253,9 @@ void initialize_cmd_table() {
 	cmd_table[9].name = "hide_mouse";
 	cmd_table[10].name = "show_mouse";
 	cmd_table[11].name = "mouse_sensitivity";
-	cmd_table[12].name = "shutdown";
-	cmd_table[13].name = "exit";
+	cmd_table[12].name = "mouse_test";
+	cmd_table[13].name = "shutdown";
+	cmd_table[14].name = "exit";
 
 	cmd_table[0].func = &echo;
 	cmd_table[1].func = &clear;
@@ -275,8 +276,9 @@ void initialize_cmd_table() {
 	cmd_table[9].func = &mouse_hide;
 	cmd_table[10].func = &mouse_show;
 	cmd_table[11].func = &mouse_sensitivity;
-	cmd_table[12].func = &halt_system;
+	cmd_table[12].func = &mouse_test;
 	cmd_table[13].func = &halt_system;
+	cmd_table[14].func = &halt_system;
 
 	cmd_table[0].help = "Echo repeats the input string following echo statement \n example: \"echo Hello I am using echo\"";
 	cmd_table[1].help = "Clears the screen, uses no arguments, therefore will ignore any ones received\n";
@@ -293,12 +295,13 @@ void initialize_cmd_table() {
 	// cmd_table[13].help = "Sets the console color (duh)\n";
 	cmd_table[6].help = "Beeps\n";
 	cmd_table[7].help = "Plays Sound!\n";
-	cmd_table[8].help = "Shows history\n";
+	cmd_table[8].help = "Displays a record of all executed commands\n";
 	cmd_table[9].help = "Hides the mouse cursor\n";
 	cmd_table[10].help = "Shows the mouse cursor (enabled by default)\n";
 	cmd_table[11].help = "Sets the sensitivity of the mouse (1-100)\n";
-	cmd_table[12].help = "Halts the system.\n";
-	cmd_table[13].help = "Alias de Shutdown\n";
+	cmd_table[12].help = "Probamos el mouse\n";
+	cmd_table[13].help = "Halts the system.\n";
+	cmd_table[14].help = "Alias de Shutdown\n";
 }
 
 void history_go_back() {
@@ -336,9 +339,17 @@ int mouse_event(event_id a, uint64_t x, uint64_t y, uint64_t flag) {
 				refresh_shell('\n');
 		}
 
+	} else {
+		if (flag & 0x1) {
+			unhang_click();
+		}
 	}
 
 	
 
 	return 0;
+}
+
+void set_listening_mouse(unsigned char b) {
+	listening_mouse = b;
 }

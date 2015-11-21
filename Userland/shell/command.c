@@ -10,6 +10,8 @@ static void parse_title(char *raw, song_t* parse_song);
 static void parse_header(char *raw, song_t* parse_song);
 static void parse_body(char *raw, song_t* parse_song);
 
+char waiting_click = 0;
+
 /*****Commands functions*****/
 
 
@@ -194,6 +196,33 @@ void mouse_sensitivity(char* argv[], int argc) {
 		return;
 	}
 	set_opts(STDMOUSE, REQUEST_SENSITIVTY, sensitivty);
+}
+
+void hang_for_click() {
+	waiting_click = 1;
+	set_listening_mouse(0);
+}
+
+void unhang_click() {
+	waiting_click = 0;
+	set_listening_mouse(1);
+}
+
+void mouse_test(char *argv[], int argc) {
+
+	set_opts(STDOUT, REQUEST_SET_COLOR, build_colour(COLOR_BLACK, COLOR_LIGHT_GREY));
+
+	clear(argv, argc);
+
+	hang_for_click();
+
+	while (1) {
+		if (!waiting_click) {
+			set_opts(STDOUT, REQUEST_RESET, 0);
+			clear(argv, argc);
+			break;
+		}
+	}
 }
 
 // https://en.wikipedia.org/wiki/Scientific_pitch_notation

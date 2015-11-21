@@ -68,10 +68,14 @@ void beep(char** args, int argc);
 void mouse_hide(char *argv[], int argc);
 void mouse_show(char *argv[], int argc);
 void mouse_sensitivity(char *argv[], int argc);
+void mouse_test(char *argv[], int argc);
 void play_sound(char *argv[], int argc);
 void commands(char** args, int argc);
 void print_ascii_table(char** args, int argc);
 void setcolor(char** args, int argc);
 void screen_saver_delay(char** args, int argc);
+
+void unhang_click();
+void hang_for_click();
 
 #endif

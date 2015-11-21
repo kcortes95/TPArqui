@@ -41,5 +41,6 @@ void history_go_back();
 void history_go_forward();
 
 int mouse_event(event_id a, uint64_t b, uint64_t c, uint64_t d);
+void set_listening_mouse(unsigned char b);
 
 #endif
