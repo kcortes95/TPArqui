@@ -10,6 +10,8 @@ static void parse_title(char *raw, song_t* parse_song);
 static void parse_header(char *raw, song_t* parse_song);
 static void parse_body(char *raw, song_t* parse_song);
 
+static int padding(char *s);
+
 char waiting_click = 0;
 
 /*****Commands functions*****/
@@ -195,7 +197,7 @@ void mouse_sensitivity(char* argv[], int argc) {
 		printf("0 < sensitivty <= 100\n");
 		return;
 	}
-	set_opts(STDMOUSE, REQUEST_SENSITIVTY, sensitivty);
+	set_opts(STDMOUSE, REQUEST_SENSITIVTY, 101-sensitivty);
 }
 
 void hang_for_click() {
@@ -225,6 +227,21 @@ void mouse_test(char *argv[], int argc) {
 	}
 }
 
+char *credit_text[] = {
+	"Creditos",
+	"",
+	"Integrantes",
+	"Martin Goffan",
+	"Eric Horvat",
+	"Kevin Cortes",
+	"",
+	"Profesores",
+	"Santiago Valles",
+	"Augusto Nizzo Mc Intosh",
+	"Rodrigo Rearden",
+	""
+};
+
 // https://en.wikipedia.org/wiki/Scientific_pitch_notation
 // 
 static float base_frequencies[] = {
@@ -242,6 +259,54 @@ static float base_frequencies[] = {
 	30.868, // B   11
 	0,			// Pause  12
 };
+
+static int padding(char *s) {
+	return (80-strlen(s))/2;
+}
+
+void credits(char *argv[], int argc) {
+	
+	char songs[4096];
+	song_t parsed_songs[20];
+	int choice = -1;
+	int i = 0, j = 0;
+	note_t current_note;
+	uint32_t one_note_length;
+	char **s = credit_text;
+
+	clear(argv, argc);
+
+	for (j = 0; j <= 25; j++){
+		printf("\n");
+	}
+
+	fgets(STDFILE, songs, 4096);
+
+	parse_sounds(songs, parsed_songs);
+
+	// StarWars es la 6
+	choice = 6;
+
+	one_note_length = 60000 / parsed_songs[choice-1].beat * 4;
+
+	for (; i < parsed_songs[choice-1].read_notes; i++) {
+
+		current_note = parsed_songs[choice-1].notes[i];
+		for (j = 0; j < padding(*s); j++) {
+			putc(' ');
+		}
+		printf("%s\n", *s);
+		s++;
+
+		if (i % 11 == 0) {
+			s = credit_text;
+		}
+
+		beepwo( one_note_length / current_note.duration,
+			base_frequencies[current_note.pitch] * (1 << current_note.octave) );
+	}
+	set_opts(STDFILE, REQUEST_RESET, 0);
+}
 
 void play_sound(char *argv[], int argc) {
 
@@ -285,7 +350,6 @@ void play_sound(char *argv[], int argc) {
 
 		current_note = parsed_songs[choice-1].notes[i];
 
-		// printf("d:%d p:%d o:%d**", current_note.duration, current_note.pitch, current_note.octave);
 		beepwo( one_note_length / current_note.duration,
 			base_frequencies[current_note.pitch] * (1 << current_note.octave) );
 	}
@@ -375,8 +439,8 @@ static void parse_body(char *raw, song_t* parse_song) {
 
 		switch (state) {
 			case kReadingInitial:
-				parse_song->notes[i].duration = (uint8_t)-1;
-				parse_song->notes[i].octave = (uint8_t)-1;
+				parse_song->notes[i].duration = (uint8_t)0;
+				parse_song->notes[i].octave = (uint8_t)0;
 				if ('1' <= *raw && *raw <= '9') {
 					state = kReadingDuration;
 
@@ -458,17 +522,18 @@ static void parse_body(char *raw, song_t* parse_song) {
 					parse_song->notes[i].duration *= 2;
 				} else if ('0' <= *raw && *raw <= '9'){
 					parse_song->notes[i].octave = (uint8_t)(*raw - '0');
+					state = kReadingOctave;
 				} else if (*raw == ',') {
 					parse_song->notes[i].octave = parse_song->default_octave;
+					state = kReadingOctave;
 				}
-				state = kReadingOctave;
 				break;
 			case kReadingOctave:
 				state = kReadingInitial;
-				if ( parse_song->notes[i].duration == (uint8_t)-1) {
+				if ( parse_song->notes[i].duration == (uint8_t)0) {
 					parse_song->notes[i].duration = parse_song->default_duration;
 				}
-				if ( parse_song->notes[i].octave == (uint8_t)-1) {
+				if ( parse_song->notes[i].octave == (uint8_t)0) {
 					parse_song->notes[i].octave = parse_song->default_octave;
 				}
 				i++;

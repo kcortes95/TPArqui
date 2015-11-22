@@ -17,6 +17,7 @@ static int syscall_beep(ddword length, ddword freq, ddword arg3);
 static int syscall_shutdown(ddword arg1, ddword arg2, ddword arg3);
 static int syscall_set_opts(ddword arg1, ddword arg2, ddword arg3);
 static int syscall_event(ddword id, ddword func_ptr, ddword arg3);
+static int syscall_wait(ddword millis, ddword arg2, ddword arg3);
 
 int (*syscalls[SHUTDOWN-READ+1])(ddword, ddword, ddword);
 static char* song_repository_addr = (char*)0x500000;
@@ -210,9 +211,17 @@ static int syscall_event(ddword id, ddword func_ptr, ddword arg3) {
 	if (id == MOUSE) {
 		
 		add_mouse_listener(listener);
+	} else if (id == KEYBOARD) {
+
+		add_listener(KEYBOARD, listener);
 	}
 
 	return 0;
+}
+
+static int syscall_wait(ddword millis, ddword arg2, ddword arg3) {
+
+	wait(millis);
 }
 
 /**
@@ -242,6 +251,7 @@ void init_syscalls() {
 	syscalls[BEEP] = &syscall_beep;
 	syscalls[PLAY_SOUND] = &syscall_play_sound;
 	syscalls[EVENT] = &syscall_event;
+	syscalls[WAIT] = &syscall_wait;
 	syscalls[SHUTDOWN] = &syscall_shutdown;
 
 	syscall_listener.call = &on_ack_syscall;

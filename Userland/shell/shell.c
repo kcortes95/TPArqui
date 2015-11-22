@@ -254,8 +254,9 @@ void initialize_cmd_table() {
 	cmd_table[10].name = "show_mouse";
 	cmd_table[11].name = "mouse_sensitivity";
 	cmd_table[12].name = "mouse_test";
-	cmd_table[13].name = "shutdown";
-	cmd_table[14].name = "exit";
+	cmd_table[13].name = "credits";
+	cmd_table[14].name = "shutdown";
+	cmd_table[15].name = "exit";
 
 	cmd_table[0].func = &echo;
 	cmd_table[1].func = &clear;
@@ -277,8 +278,9 @@ void initialize_cmd_table() {
 	cmd_table[10].func = &mouse_show;
 	cmd_table[11].func = &mouse_sensitivity;
 	cmd_table[12].func = &mouse_test;
-	cmd_table[13].func = &halt_system;
+	cmd_table[13].func = &credits;
 	cmd_table[14].func = &halt_system;
+	cmd_table[15].func = &halt_system;
 
 	cmd_table[0].help = "Echo repeats the input string following echo statement \n example: \"echo Hello I am using echo\"";
 	cmd_table[1].help = "Clears the screen, uses no arguments, therefore will ignore any ones received\n";
@@ -300,13 +302,16 @@ void initialize_cmd_table() {
 	cmd_table[10].help = "Shows the mouse cursor (enabled by default)\n";
 	cmd_table[11].help = "Sets the sensitivity of the mouse (1-100)\n";
 	cmd_table[12].help = "Probamos el mouse\n";
-	cmd_table[13].help = "Halts the system.\n";
-	cmd_table[14].help = "Alias de Shutdown\n";
+	cmd_table[13].help = "Los creditos\n";
+	cmd_table[14].help = "Halts the system.\n";
+	cmd_table[15].help = "Alias de Shutdown\n";
 }
 
 void history_go_back() {
 
-	fill_shell(cmd_history[--history_index].buffer);
+	if (history_index > 0) {
+		fill_shell(cmd_history[--history_index].buffer);
+	}
 
 }
 

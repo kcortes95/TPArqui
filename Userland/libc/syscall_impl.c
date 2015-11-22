@@ -35,3 +35,7 @@ int set_opts(uint8_t fd, uint32_t request, uint16_t options) {
 int register_event(uint8_t id, int (*listener)(event_id, uint64_t, uint64_t, uint64_t)) {
 	return _syscaller((int)EVENT, id, (uintptr_t)listener, 0);
 }
+
+int wait(uint64_t millis) {
+	return _syscaller((int)WAIT, millis, 0, 0);
+}
