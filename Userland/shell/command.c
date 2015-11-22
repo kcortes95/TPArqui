@@ -116,6 +116,9 @@ void settime(char** args, int argc) {
 }
 
 void halt_system(char** args, int argc) {
+
+	credits(args, argc);
+
 	shutdown();
 }
 
@@ -291,16 +294,16 @@ void credits(char *argv[], int argc) {
 
 	for (; i < parsed_songs[choice-1].read_notes; i++) {
 
+		if (i % 11 == 0) {
+			s = credit_text;
+		}
+
 		current_note = parsed_songs[choice-1].notes[i];
 		for (j = 0; j < padding(*s); j++) {
 			putc(' ');
 		}
 		printf("%s\n", *s);
 		s++;
-
-		if (i % 11 == 0) {
-			s = credit_text;
-		}
 
 		beepwo( one_note_length / current_note.duration,
 			base_frequencies[current_note.pitch] * (1 << current_note.octave) );
@@ -696,7 +699,7 @@ void reset_vect(char vec[]) {
 }
 
 void help_error_print() {
-	printf("\nInvoke help as follows: \"help \"command_name\"\".\nTo see list of available commands type \"commands\"\n");	
+	printf("\nInvoke help as follows: \"help \"command_name\"\".\nTo see list of available commands type \"help\"\n");	
 }
 
 

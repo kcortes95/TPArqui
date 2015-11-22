@@ -128,13 +128,7 @@ int main() {
 	init_mouse();
 	init_keyboard();
 
-//	play_intro();
-//	beeplf(2,9121); //de lo de goffan
-//	playNote(9121);
-	// while(1){
-	// println("Hola");
-	// playNote(9121);
-	// }
+	play_intro();
 	
 	clc();
 
